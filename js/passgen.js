@@ -10,20 +10,30 @@
 // Or make rough and complex
 
 var availableCharsets={};
-availableCharsets["alphaLower"]="abcdefghijklnopqrstuvwxyz";
-availableCharsets["alphaUpper"]= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-availableCharsets["numeric"] ="0123456789";
-availableCharsets["punctuation"]=" .,/;':?\"!";
-availableCharsets["special"]="#@~<€`¬¦|>=+-_)(*&^%$£[]{}";
-availableCharsets["accented"]="ÂÃÄÀÁÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜİàáâãäçèéêëìíîïğñòóôõöùúûüıÿ";
-availableCharsets["accentedSpecial"]="ÅÆĞÑØŞßåæøş";
+availableCharsets["alphaLower"]				='abcdefghijklnopqrstuvwxyz';
+availableCharsets["alphaUpper"]				= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+availableCharsets["numeric"]				='0123456789';
+availableCharsets["punctuation"]			='.,/;\':?"!';
+availableCharsets["special"]				=' #@~`¬¦|<>=+-_)(*&^%$£€[]{}';
+availableCharsets["accented"]				='àáâãäçèéêëìíîïğñòóôõöùúûüıÿ';
+availableCharsets["accentedUppercase"]		='ÂÃÄÀÁÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜİ';
+availableCharsets["accentedSpecial"]		='ÅÆĞÑØŞßåæøş';
 
+var defaultEnabledCharsets=["alphaLower","alphaUpper","numeric","punctuation"];
 
 var enabledCharsets={};
-enableAllCharsets();
+enableDefaultCharsets();
+
+var allowCharacterRepetition=true;
+var passwordSize=10;
 
 var enableAlpha=true, enableNumeric=true, enableSpecial=true, enableAccented=true, enableAccentedSpecial=true;
 var customChars="";
+var ratings={};
+
+ratings["passwordSize"]=0;
+ratings["charsets"]=0;
+ratings["characterVariety"]=0;
 
 function setCustomCharset( charset ){
 	if( charset.length==0 ){
@@ -33,30 +43,39 @@ function setCustomCharset( charset ){
 	}
 }
 
-function enableAllCharsets( charsetName ){
+function enableAllCharsets( ){
 	for(var charsetName in availableCharsets){
 		 enableCharset( charsetName );
 	};
 }
 
+function enableDefaultCharsets(){
+	defaultEnabledCharsets.forEach(function(charsetName) {
+		enableCharset( charsetName );
+	});
+}
+
 
 function enableCharset( charsetName ){
+	console.log("Charset " + charsetName  + " enabled");
 	enabledCharsets[charsetName]=availableCharsets[charsetName];
 }
 
 function disableCharset( charsetName ){
+	console.log("Charset " + charsetName  + " disabled");
 	delete enabledCharsets[charsetName];
 }
 
 
 function prepareCharset( ){
 	var fullCharset="";
-	document.write("charsets:");
+	var logStr="Enabled charsets:";
 	for(var charset in enabledCharsets){
-		document.write(" "+charset);
+		logStr+=" "+charset;
 		fullCharset+=enabledCharsets[charset];
 	};
-	document.write("<BR />"+fullCharset+"<BR />");
+	console.log(logStr);
+	console.log("Characters:"+fullCharset)
 	return fullCharset;
 }
 
@@ -75,9 +94,9 @@ function checkCompliance( password ){
 		for(var charsetName in enabledCharsets){
 			var charset=enabledCharsets[charsetName];
 			if( !hasOneFromCharset(charset, password) ){
-				document.write("password \"" + password+ "\" was missing from " + charsetName );
+				var logStr="password \"" + password+ "\" was missing from " + charsetName ;
 				password=addOneFromCharset(charset, password);
-				document.write(", now" + password + "<BR />");
+				console.log(logStr + ", now" + password);
 				isCompliant=false;
 			}		
 		}
@@ -97,7 +116,6 @@ function replaceCharAt(inputStr, index, newChar) {
 }
 
 function ratePassword( password ){
-	var ratings={};
 	ratings["passwordSize"]=ratePasswordSize(password);
 	ratings["charsets"]=rateCharsets(password);
 	ratings["characterVariety"]=rateCharacterVariety(password);
@@ -107,11 +125,12 @@ function ratePassword( password ){
 	var productOfRatings=1;
 	for(var rating in ratings){
 		var oneRating=ratings[rating];
+		console.log("Rating "+rating+ " is :" + ratings[rating]);
 		sumOfRatings+=oneRating;
 		productOfRatings*=oneRating;
 	}	
 	//return (sumOfRatings/nbRatings+Math.pow(productOfRatings, 1/3))/2;
-	return Math.pow(productOfRatings, 1/3);
+	return Math.pow(productOfRatings, 1.0/3.0);
 	
 }
 
@@ -119,21 +138,21 @@ function ratePassword( password ){
 function ratePasswordSize( password ){
 	var len = password.length;
 	// lower than 5 is far too low
-	if ( len < 5 ) return 0.01;	
-	// lower than 10 is weak
-	if ( len < 10 ) return .3+.03*len;
-	// more than 10 is good enough
-	if ( len < 20 ) return .60+.03*(len-10);
+	if ( len < 5 ) return 0.01*len;		
+	if ( len < 11 ) return .1*(len-4);
+	if ( len < 20 ) return .6+.03*(len-10);
 	// more than 20 is pretty good
 	if ( len < 30 ) return .90+.01*(len-20);
 	// more than 30 characters = great enthropy
+	if ( len < 50 ) return .99+.0005*(len-30);
 	return 1.0;	
 }
 
 function rateCharsets( password ){
 	var charsetCount=0;
 	for(var charsetName in availableCharsets){
-		var charset=enabledCharsets[charsetName];
+		var charset=availableCharsets[charsetName];
+		console.log("check charset " + charsetName + ": " + charset);
 		if( hasOneFromCharset(charset, password) ){
 			charsetCount++;
 		}		
@@ -143,7 +162,7 @@ function rateCharsets( password ){
 	// 2 types of characters is weak
 	if( charsetCount == 2 ) return .2;
 	// 3 types of characters is good enough
-	if( charsetCount == 3 ) return .7;
+	if( charsetCount == 3 ) return .65;
 	// More than 3 types of characters is pretty good
 	if( charsetCount == 4 ) return .9;	
 	// More than 4 types of characters is perfect
@@ -151,23 +170,32 @@ function rateCharsets( password ){
 	
 }
 
+
 function rateCharacterVariety( password ){	
+	var rate=rawRateCharacterVariety( password );
+	if (rate >= 1.0 ) return 1.0; else return rate;
+}
+
+
+function rawRateCharacterVariety( password ){	
 	var differentCharacters={};
 	for (var i=0;i<password.length;i++) {  
 		differentCharacters[password.charAt(i)]=true;
 	}
-	var nbDifferentCharacters=Object.keys(differentCharacters).length;
+	var nbDifferentCharacters=Object.keys(differentCharacters).length;	
 	var variation=nbDifferentCharacters/password.length;
+	
+	
 	// less than 10% variation is not enough
-	if (variation<.1) return 0.01;
+	if (variation<.1) return 0.01*nbDifferentCharacters/10.0;
 	// less than 50% variation is weak
-	if (variation<.5) return variation/2;
+	if (variation<.5) return variation/2*nbDifferentCharacters/10.0;
 	// 50-85% variation is good enough
-	if (variation<.85) return variation;
-	// 85-95% variation is perfect
-	if (variation<.95) return 1.0;
+	if (variation<.91) return variation*nbDifferentCharacters/10.0;
+	// 91-95% variation is perfect
+	if (variation<.99) return 1.0;
 	// close to 100% variation is a little bit worse, a bit of repetition makes assessment harder
-	return .95;
+	return .95*nbDifferentCharacters/10.0;
 }
 
 function hasOneFromCharset( charset, password){
@@ -181,13 +209,29 @@ function hasOneFromCharset( charset, password){
 	return hasFromCharset;
 }
 
+function makePassword(){
+	return makePasswordWithSize(passwordSize);
+}
+
+function passwordStrengthDescFromRate(rate){
+	if( rate < .5) return "Unsafe";
+	if( rate < .6) return "Weak";
+	if( rate < .7) return "Medium";
+	if( rate < .8) return "Good";
+	if( rate >= .8) return "Secure";
+	return "N/A";
+}
 
 
-function makePassword( passwdSize ){
+function makePasswordWithSize( passwdSize ){
 	var passwd="";
 	var charset=prepareCharset();
-	for (var i=0;i<passwdSize;i++) {    
-		passwd+=nextChar( charset );
+	for (var i=0;i<passwdSize;i++) {
+		var newChar=nextChar( charset )
+		passwd+=newChar;
+		if( !allowCharacterRepetition ) {
+			charset=charset.replace(newChar,'');
+		}
 	}
 	return checkCompliance(passwd);
 }

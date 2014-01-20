@@ -1,0 +1,6 @@
+function buildCharsetsForm( elementID ){	
+	for(var charsetName in availableCharsets){
+		 $(elementID).append(""); 
+		 enableCharset( charsetName );
+	};
+}
