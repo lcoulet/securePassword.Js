@@ -1,0 +1,18 @@
+/*
+Simple Dark HTML Template Created By Travis Berry http://www.travisberry.com 
+Licensed under a Creative Commons Attribution 3.0 United States License.
+*/
+/* This style sheet overrides styles in regular css to make page work for those without javascript*/
+.items section {
+	float:none !important;
+	margin-right:30px;
+}
+.scrollable .items {
+    position: absolute;
+	width:660px !important;
+}
+.scrollable {
+    overflow: default;
+    position: inherit;
+    width: 510px;
+}
