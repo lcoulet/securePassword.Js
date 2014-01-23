@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2" />
+		<title>SimplePassGen</title>
+		<script type="text/javascript" src="../js/passgen.js"></script>
+		<script type="text/javascript" src="../js/passgen-ui.js"></script>
+		<link rel="stylesheet" href="../css/style.css" />
+		<link rel="stylesheet" href="../css/ui-darkness/jquery-ui.custom.css" />
+		<script src="../libraries/jquery.min.js"></script>
+		<script src="../libraries/jquery-ui.custom.min.js"></script>		
+	</head>
+	<body>
+		<div id="container">
+		<form id="charsetsSelector"></form>
+		<br />
+		<form id="optionsSelector"></form>
+		<br />
+		
+		<br />
+		<a id="generateButton">Generate</a>
+		<br />
+		
+		Password: <span id="generatedPassword"></span><br />
+		<div id="coloredRate">
+		Security Rate: <span id="passwordRate"></span> <span id="passwordRateValue"></span><br />
+		</div>
+		<br />
+		<div id="ratingDetails"></div>
+		<br />
+		<script>
+		   
+		   buildCharsetsForm("#charsetsSelector");
+		   buildOptionsForm("#optionsSelector");
+		   buildRatingElements("#ratingDetails");
+		   
+		    $( "#generateButton" ).button().click(
+				function( event ) {
+					generatePasswordInUI();
+				}
+			);
+           
+		</script>
+		</div>
+		
+		
+	</body>
+</html>

@@ -35,6 +35,10 @@ ratings["passwordSize"]=0;
 ratings["charsets"]=0;
 ratings["characterVariety"]=0;
 
+/**
+ * Creates a custom charset names "custom" (or replace if already exists) with the provided characters
+ * @param {string} The characters of the custom charset
+ */
 function setCustomCharset( charset ){
 	if( charset.length==0 ){
 		delete availableCharsets["custom"];
@@ -43,30 +47,46 @@ function setCustomCharset( charset ){
 	}
 }
 
+/**
+ * Enables all available charset
+ */
 function enableAllCharsets( ){
 	for(var charsetName in availableCharsets){
 		 enableCharset( charsetName );
 	};
 }
 
+/**
+ * Enables all default charsets
+ */
 function enableDefaultCharsets(){
 	defaultEnabledCharsets.forEach(function(charsetName) {
 		enableCharset( charsetName );
 	});
 }
 
-
+/**
+ * Enables one charset
+ * @param {string} The name of the charset to enable
+ */
 function enableCharset( charsetName ){
 	console.log("Charset " + charsetName  + " enabled");
 	enabledCharsets[charsetName]=availableCharsets[charsetName];
 }
 
+/**
+ * Disables one charset
+ * @param {string} The name of the charset to disable
+ */
 function disableCharset( charsetName ){
 	console.log("Charset " + charsetName  + " disabled");
 	delete enabledCharsets[charsetName];
 }
 
-
+/**
+ * Builds a bigger charset from all enabled charsets
+ * @type {string} The complete charset
+ */
 function prepareCharset( ){
 	var fullCharset="";
 	var logStr="Enabled charsets:";
@@ -79,10 +99,20 @@ function prepareCharset( ){
 	return fullCharset;
 }
 
+/**
+ * Provides any character (random) from the provided charset
+ * @param {string} charset The set of characters to use
+ * @type {string} The random character
+ */
 function nextChar( charset ){	
 	return charset.charAt(Math.floor(Math.random() * charset.length));
 }
 
+/**
+ * Checks, and ensures if possible, that the password has at least one character from all enabled charsets
+ * @param {string} password the password to analyze
+ * @type {string} The eventually modified (or not) version of the password
+ */
 function checkCompliance( password ){
 	var isCompliant=false;
 	
@@ -198,6 +228,13 @@ function rawRateCharacterVariety( password ){
 	return .95*nbDifferentCharacters/10.0;
 }
 
+
+/**
+ * Checks if the password has at least one character from provided charset
+ * @param {string} charset the related charset
+ * @param {string} password the password to analyze
+ * @type {boolean} true if the password has at least one character from provided charset, false either
+ */
 function hasOneFromCharset( charset, password){
 	var hasFromCharset=false;
 	for (var i=0;i<password.length;i++) {    
@@ -209,8 +246,73 @@ function hasOneFromCharset( charset, password){
 	return hasFromCharset;
 }
 
+/**
+ * Build a password using global settings for passwordSize and charsets to use
+ * @type {string} the generated password
+ */
 function makePassword(){
 	return makePasswordWithSize(passwordSize);
+}
+
+
+/**
+ * Find all sequences of characters like "ABCDEF" or "123456" in a given password
+ * @param {string} password the password to analyze
+ * @type {string[]}
+ */
+function findSequences( password ){
+	var lastCode=-1;
+	var lastChar="";
+	var isInSequence=false;
+	var currSequence="";
+	var sequences= new Array();
+	var lastDirection=0;
+	
+	for (var i=0;i<password.length;i++) {    
+		var currCode=password.charCodeAt(i);
+		var direction=0;
+		var isSequence=false;
+		
+		// if this is not the first character, check for ordered sequence
+		if( lastCode != -1 ) {
+			// do we detect a sequence?
+			isSequence=(Math.abs( currCode - lastCode) == 1);
+			direction=currCode - lastCode;
+			
+			// check if sequential status detection status changed
+			if( isSequence != isInSequence){
+				if( isSequence == true ){
+					currSequence+=lastChar;
+					lastDirection=currCode - lastCode;
+				}else{
+					sequences.push(currSequence);
+					currSequence="";
+				}				
+			}
+			
+			if( isSequence ){
+				// check if direction changed, if yes there are 2 sequences
+				if( direction != lastDirection){
+					sequences.push(currSequence);
+					currSequence=""+lastChar;
+				}
+				// keep information of current sequence
+				currSequence=currSequence+password.charAt(i);
+			}					
+		}
+		
+		isInSequence=isSequence;
+		
+		// keep information foir checking next char
+		lastCode=currCode;
+		lastChar=password.charAt(i);
+		lastDirection=direction;
+	}
+	if( currSequence.length != 0 ){
+		sequences.push(currSequence);
+	}
+	
+	return sequences;
 }
 
 function passwordStrengthDescFromRate(rate){
