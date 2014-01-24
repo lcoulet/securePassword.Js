@@ -178,6 +178,27 @@ function ratePasswordSize( password ){
 	return 1.0;	
 }
 
+
+/**
+ * Provides a subjective rating of a given password for the amount/size of character sequences inside
+ * @param {string} password The set of characters to use
+ * @type {number} The rating, floating point value between 0 and 1
+ */
+function rateSequences( password ){
+	var seqLength = findSequences(password).reduce(function(previousValue, currentValue, index, array){
+		return previousValue + currentValue;
+	},"").length;	
+	console.log("Seq length = "+seqLength);
+	var ratio=seqLength/password.length;
+	if( ratio <= .1) return 1.0;
+	if( ratio <= .5) return 1.0-ratio;
+	if( ratio <= .79) return .8-ratio;
+	return 0.01;
+	
+	
+}
+
+
 function rateCharsets( password ){
 	var charsetCount=0;
 	for(var charsetName in availableCharsets){
