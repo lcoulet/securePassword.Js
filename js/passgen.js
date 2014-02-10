@@ -215,6 +215,7 @@ function rateSequences( password ){
 	if( ratio <= .5) return .9-ratio/2;
 	if( ratio <= .6) return .64-(ratio-.5);
 	if( ratio <= .8) return .53-((ratio-.6)*2.0);
+	if ( ratio == 1.0 ) return 0.0;
 	return 0.01;
 	
 	
