@@ -5,40 +5,50 @@
 		<title>SimplePassGen</title>
 		<script type="text/javascript" src="../js/passgen.js"></script>
 		<script type="text/javascript" src="../js/passgen-ui.js"></script>
+		<script type="text/javascript" src="../js/gauge.min.js"></script>
 		<link rel="stylesheet" href="../css/style.css" />
 		<link rel="stylesheet" href="../css/ui-darkness/jquery-ui.custom.css" />
 		<script src="../libraries/jquery.min.js"></script>
 		<script src="../libraries/jquery-ui.custom.min.js"></script>		
 	</head>
 	<body>
+		
 		<div id="container">
+		<div id="leftDiv">
 		<form id="charsetsSelector"></form>
 		<br />
-		<form id="optionsSelector"></form>
+		<div id="optionsDiv"><form id="optionsSelector"></form></div>
 		<br />
+		
 		
 		<br />
 		<input type="submit" value="Generate" id="generateButton">
 		<br />
 		
-		Password: <span id="generatedPassword"></span><br />
+		Password: <input type="text" id="generatedPassword"></input><br />
+		<input type="submit" value="Test again" id="testButton">
+		</div>
+		
+		<div id="rightDiv">
+		<div id="gaugeDiv"><canvas id="gauge" width="220" height="150"></canvas></div>
+		
 		<div id="coloredRate">
 		Security Rate: <span id="passwordRate"></span> <span id="passwordRateValue"></span><br />
 		</div>
 		<br />
 		<div id="ratingDetails"></div>
 		<br />
+		</div>
+		
 		<script>
 		   
 		   buildCharsetsForm("#charsetsSelector");
 		   buildOptionsForm("#optionsSelector");
 		   buildRatingElements("#ratingDetails");
-		   
-		    $( "#generateButton" ).button().click(
-				function( event ) {
-					generatePasswordInUI();
-				}
-			);
+		   buildGenerateButton("#generateButton");
+		   buildGaugeElement("gauge");
+		   buildTestButton("#testButton");
+		    
            
 		</script>
 		</div>
