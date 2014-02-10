@@ -34,6 +34,16 @@ var ratings={};
 ratings["passwordSize"]=0;
 ratings["charsets"]=0;
 ratings["characterVariety"]=0;
+ratings["sequences"]=0;
+ratings["keyboard"]=0;
+
+var coefficients={};
+coefficients["passwordSize"]=4;
+coefficients["charsets"]=1;
+coefficients["characterVariety"]=1;
+coefficients["sequences"]=1;
+coefficients["keyboard"]=1;
+
 
 /**
  * Creates a custom charset names "custom" (or replace if already exists) with the provided characters
@@ -149,18 +159,29 @@ function ratePassword( password ){
 	ratings["passwordSize"]=ratePasswordSize(password);
 	ratings["charsets"]=rateCharsets(password);
 	ratings["characterVariety"]=rateCharacterVariety(password);
+	ratings["sequences"]=rateSequences(password);
+	ratings["keyboard"]=rateKeyboardLayout(password);
 	
-	var nbRatings=Object.keys(ratings).length;
+	
+	coefficients["passwordSize"]=4;
+	coefficients["charsets"]=1;
+	coefficients["characterVariety"]=1;
+	coefficients["sequences"]=1;
+	coefficients["keyboard"]=1;
+	
+	
+	var nbRatings=0;
 	var sumOfRatings=0;
 	var productOfRatings=1;
 	for(var rating in ratings){
 		var oneRating=ratings[rating];
 		console.log("Rating "+rating+ " is :" + ratings[rating]);
 		sumOfRatings+=oneRating;
-		productOfRatings*=oneRating;
+		productOfRatings*=Math.pow(oneRating,coefficients[rating]);
+		nbRatings+=coefficients[rating];
 	}	
 	//return (sumOfRatings/nbRatings+Math.pow(productOfRatings, 1/3))/2;
-	return Math.pow(productOfRatings, 1.0/3.0);
+	return Math.pow(productOfRatings, 1.0/nbRatings);
 	
 }
 
@@ -187,17 +208,136 @@ function ratePasswordSize( password ){
 function rateSequences( password ){
 	var seqLength = findSequences(password).reduce(function(previousValue, currentValue, index, array){
 		return previousValue + currentValue;
-	},"").length;	
-	console.log("Seq length = "+seqLength);
+	},"").length;		
 	var ratio=seqLength/password.length;
+	console.log("Rating for '" +password+ "' len="+ seqLength + " ratio="+ratio);
 	if( ratio <= .1) return 1.0;
-	if( ratio <= .5) return 1.0-ratio;
-	if( ratio <= .79) return .8-ratio;
+	if( ratio <= .5) return .9-ratio/2;
+	if( ratio <= .6) return .64-(ratio-.5);
+	if( ratio <= .8) return .53-((ratio-.6)*2.0);
 	return 0.01;
 	
 	
 }
 
+/**
+ * Provides a subjective rating of a given password for the character sequences inside according to keyboard layouts
+ * @param {string} password The set of characters to use
+ * @type {number} The rating, floating point value between 0 and 1
+ */
+function rateKeyboardLayout( password ){
+	var keyboardSequences={};
+	if( !password || password.length==0 ){
+		return 0.0;
+	}
+	
+	keyboardSequences["qwerty"]=("qwertyuiop[]asdfghjkl;'#zxcvbnm,./");
+	keyboardSequences["qwertz"]=("qwertzuiopü+asdfghjklöä#<ycxvbnm,.-");
+	keyboardSequences["azerty"]=("azertyuiop^$qsdfghjklmù*<wxcvbn?.:!");
+	
+	var worstsequence= {
+			length: 0,
+			sequence: "",
+			offset: 0
+		};
+	
+	var passwd=password.toLowerCase(); 
+	for(var keyboardseqName in keyboardSequences){
+		var commonality=longestCommonSubstring(passwd, keyboardSequences[keyboardseqName]);
+		if( commonality.length > worstsequence.length){
+			worstsequence=commonality;
+		}
+		//console.log( "password : " + commonality.length + " " + commonality.sequence + " keyboard: " + keyboardseqName );
+	}
+	
+	// Less than 3 characters is no problem	
+	if ( worstsequence.length < 3 && password.length > 8 ) return 1.0;			
+	if ( worstsequence.length < 3  ) return 1-worstsequence.length/10;		
+	
+	var indicator=worstsequence.length/password.length;
+	
+	// More than 70% is too much, reduce by 4
+	if ( indicator > .7) 	return (password.length-worstsequence.length)/(4*password.length);
+	
+	// More than 45% is too much, reduce by 2
+	if ( indicator > .45) 	return (password.length-worstsequence.length)/(2*password.length);
+		
+	// 3 characters  or more depend on password size
+	return (password.length-worstsequence.length)/password.length;
+	
+	
+}
+
+/**
+ * This function provides the longest common substring between two strings
+ * This algorithm is not optimized but good enough for one password and a 
+ * small sequence of characters representing the keyboard layout.
+ *
+ * taken from:
+ * http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring
+ * @param {string} string1 First string
+ * @param {string} string2 Second string
+ * @return {object} longest substring: length, sequence, offset
+ */
+function longestCommonSubstring(str1, str2){
+	if (!str1 || !str2)
+		return {
+			length: 0,
+			sequence: "",
+			offset: 0
+		};
+ 
+	var sequence = "",
+		str1Length = str1.length,
+		str2Length = str2.length,
+		num = new Array(str1Length),
+		maxlen = 0,
+		lastSubsBegin = 0;
+ 
+	for (var i = 0; i < str1Length; i++) {
+		var subArray = new Array(str2Length);
+		for (var j = 0; j < str2Length; j++)
+			subArray[j] = 0;
+		num[i] = subArray;
+	}
+	var thisSubsBegin = null;
+	for (var i = 0; i < str1Length; i++)
+	{
+		for (var j = 0; j < str2Length; j++)
+		{
+			if (str1[i] !== str2[j])
+				num[i][j] = 0;
+			else
+			{
+				if ((i === 0) || (j === 0))
+					num[i][j] = 1;
+				else
+					num[i][j] = 1 + num[i - 1][j - 1];
+ 
+				if (num[i][j] > maxlen)
+				{
+					maxlen = num[i][j];
+					thisSubsBegin = i - num[i][j] + 1;
+					if (lastSubsBegin === thisSubsBegin)
+					{//if the current LCS is the same as the last time this block ran
+						sequence += str1[i];
+					}
+					else //this block resets the string builder if a different LCS is found
+					{
+						lastSubsBegin = thisSubsBegin;
+						sequence= ""; //clear it
+						sequence += str1.substr(lastSubsBegin, (i + 1) - lastSubsBegin);
+					}
+				}
+			}
+		}
+	}
+	return {
+		length: maxlen,
+		sequence: sequence,
+		offset: thisSubsBegin
+	};
+}
 
 function rateCharsets( password ){
 	var charsetCount=0;
@@ -358,5 +498,4 @@ function makePasswordWithSize( passwdSize ){
 	}
 	return checkCompliance(passwd);
 }
-
 

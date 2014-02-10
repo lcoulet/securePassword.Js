@@ -23,7 +23,7 @@ function buildOptionsForm( elementID ){
 	 $('#'+checkboxId).change(function(){
 		if( this.checked ) allowCharacterRepetition=true; else allowCharacterRepetition=false;
 	});
-	$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="10"/>');
+	$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="10" type="number" min="1" max="255" required/>');
 	var spinner = $( "#spinner" ).spinner({
 		min: 5,
 		max: 1000,
@@ -68,7 +68,11 @@ function showRatings(){
 
 
 function generatePasswordInUI(){
-	var passwd=makePassword();
+	var spinnerVal=parseInt($('#spinner').val());
+	if( !isNaN(spinnerVal)  ){
+		passwordSize=spinnerVal;
+	}
+	var passwd=makePasswordWithSize(passwordSize);
 	$("#generatedPassword").text(passwd); 	
 	var rate=ratePassword(passwd);				
 	showRatingElement("#passwordRate","#passwordRateValue","#coloredRate",rate);
