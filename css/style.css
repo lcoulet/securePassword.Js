@@ -48,9 +48,9 @@ body{
 }
 h1{
 	font-size:70px;
-	margin-bottom:7px;
-	color:#444;
-	text-shadow: 0 2px 1px #111111;
+	margin-bottom:10px;
+	color:#888;
+	text-shadow: 0 2px 1px #fff;
 	text-transform:uppercase;
 }
 a{
@@ -78,7 +78,7 @@ input{
 }
 
 #generatedPassword{
-	font-size:3em;	
+	font-size:2em;	
 }
 
 #passwordRate{

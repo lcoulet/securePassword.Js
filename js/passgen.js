@@ -10,14 +10,26 @@
 // Or make rough and complex
 
 var availableCharsets={};
-availableCharsets["alphaLower"]				='abcdefghijklnopqrstuvwxyz';
-availableCharsets["alphaUpper"]				= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+availableCharsets["alphaLower"]				='abcdefghijklmnopqrstuvwxyz';
+availableCharsets["alphaUpper"]				='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 availableCharsets["numeric"]				='0123456789';
-availableCharsets["punctuation"]			='.,/;\':?"!';
-availableCharsets["special"]				=' #@~`¬¦|<>=+-_)(*&^%$£€[]{}';
+availableCharsets["punctuation"]			='.,/;\':?"!#@~<>=+-_)(*&%';
+availableCharsets["special"]				=' `|^$£€[]{}';
 availableCharsets["accented"]				='àáâãäçèéêëìíîïğñòóôõöùúûüıÿ';
 availableCharsets["accentedUppercase"]		='ÂÃÄÀÁÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜİ';
-availableCharsets["accentedSpecial"]		='ÅÆĞÑØŞßåæøş';
+availableCharsets["accentedSpecial"]		='ÅÆĞÑØŞßåæøş¬¦';
+
+var classifiedCharsets={};
+classifiedCharsets["vowel"]				= 'aeiouyAEIOUYàáâãäèéêëìíîïğòóôõöùúûüıÿÂÃÄÀÁÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜİÅÆØåæø';
+classifiedCharsets["consonant"]			= 'bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZçñÇĞÑŞßş';
+classifiedCharsets["numeric"]			='0123456789';
+classifiedCharsets["separate"]			='.,/;:?!¬¦| #@~=+-_&^%$£€*\`"';
+classifiedCharsets["open"]				='\'"<([{`*/';
+classifiedCharsets["close"]				='\'">)]}`*/';
+classifiedCharsets["uppercase"]			= 'BCDFGHJKLMNPQRSTVWXZÇĞÑAEIOUYÂÃÄÀÁÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜİÅÆØß';
+classifiedCharsets["lowercase"]			= 'aeiouybcdfghjklmnpqrstvwxzŞşçñàáâãäèéêëìíîïğòóôõöùúûüıÿåæø';
+
+var easyPasswordRequested=false;
 
 var defaultEnabledCharsets=["alphaLower","alphaUpper","numeric","punctuation"];
 
@@ -43,6 +55,178 @@ coefficients["charsets"]=1;
 coefficients["characterVariety"]=1;
 coefficients["sequences"]=1;
 coefficients["keyboard"]=1;
+
+
+function easierToRememberPassword( allowedCharset, length, password, previous ){	
+	// if we're done return the generated password
+	if( password.length >= length) return password;
+	
+	// make a word or a number of an arbitrary length (or remaining characters number)
+	// alphabetic words may be longer than numbers
+	var passwordAddon="";
+	var lastItem;
+	var remainingSize = length-password.length;
+	
+	var addonMaxSize=remainingSize ;
+	var addonLength;
+	if ( previous === "word" ){
+		if( addonMaxSize > 6 ) addonMaxSize = 6;
+		// improve chances for a year
+		if( addonMaxSize > 3 ) addonLength=4;
+		if( Math.random() > .6 ) addonLength = Math.ceil( Math.random() * addonMaxSize);
+		
+		
+		//  check if allowed charset contains numbers before adding any
+		if( allowedCharset.indexOf(classifiedCharsets["numeric"]) != -1 )
+			passwordAddon=easierToRememberPasswordNumber(allowedCharset, addonLength );
+		lastItem="number";
+	} else{
+		if( addonMaxSize > 8 ) addonMaxSize = 8;
+		var addonLength = Math.ceil( Math.random() * addonMaxSize);
+		// word
+		passwordAddon=easierToRememberPasswordWord( allowedCharset, addonLength );
+		lastItem="word";
+	}
+		
+	
+	// Maybe pick a separator, or an open-close group
+	passwordAddon=addSeparatorOrOpenCloseOrNothing( allowedCharset, length, passwordAddon );
+		
+	// append or prepend to previous password
+	var newPassword=appendOrPrepend(password,passwordAddon );
+	
+	// recursive call, do this amn arbitrary number of times until length is Ok		
+	return easierToRememberPassword(allowedCharset, length, newPassword, lastItem )
+}
+
+function addSeparatorOrOpenCloseOrNothing( allowedCharset, maxLength, currentPassword){
+	var remainingLength=maxLength-currentPassword.length;
+	
+	if (  remainingLength  >= 2){		
+		if ( Math.random() > .6) {
+			var index=Math.floor(Math.random() * classifiedCharsets["open"].length);
+			if( allowedCharset.indexOf(classifiedCharsets["open"].charAt(index)) >=0 &&  allowedCharset.indexOf(classifiedCharsets["close"].charAt(index))> 0)
+				return classifiedCharsets["open"].charAt(index) + currentPassword + classifiedCharsets["close"].charAt(index);
+		}		
+	}
+	if (  remainingLength >= 1){
+		if ( Math.random() > .5){ 			
+			var charToAdd = pickOneFromCharsetWithPreference(allowedCharset, classifiedCharsets["separate"]);
+			var strToAdd= charToAdd;
+			// repeat chances			
+			while( remainingLength > strToAdd.length &&  Math.random() > .7) {
+				strToAdd+=""+charToAdd;
+			}
+			return appendOrPrepend(currentPassword, strToAdd);
+		}
+	}
+	return currentPassword;
+}	
+
+function commonCharset( charset1, charset2){
+	var returnCharset="";
+	for ( var i = 0; i < charset1.length; i++ )
+	{
+		var curChar=charset1.charAt(i);
+		if( hasOneFromCharset(charset2, curChar+"")) returnCharset+=curChar;
+	}
+	return returnCharset;
+}
+
+function appendOrPrepend( existing, addon){
+	if ( Math.random() > .5) return addon + existing;  
+	return existing+addon;
+}
+
+function easierToRememberPasswordWord( allowedCharset, length ){
+	var type = Math.ceil(Math.random()*3);
+	
+	return easierToRememberPasswordWordRec( allowedCharset, "", length, type, Math.ceil(Math.random()*2) );
+	
+}
+
+function easierToRememberPasswordWordRec( allowedCharset, currentWord, length, type, lastTaken ){
+	if( currentWord.length >= length) return currentWord;
+	
+	var maxLength=length-currentWord.length;
+	
+	if( type == 3 && currentWord.length > 0){
+		type=1;
+	}
+	
+	var addOn="";
+	
+	// take vowel or consonant depending on last type and append
+	var takeFrom=classifiedCharsets["consonant"];	
+	var newLastTaken=1;
+	if (lastTaken == 1 ){
+		takeFrom=classifiedCharsets["vowel"];
+		newLastTaken=2;
+	}
+		
+	// Upercase or lowercase ?
+	// 3 choices : 3-one uppercase + lowercase / 2-all lowercase / 1-all uppercase	
+	var reducedCharset;
+	if ( type == 1 ){
+		reducedCharset = commonCharset(takeFrom,classifiedCharsets["uppercase"]);			
+	}else if (type == 2 ){
+		reducedCharset = commonCharset(takeFrom,classifiedCharsets["lowercase"]);	
+	}else {
+		reducedCharset = commonCharset(takeFrom,classifiedCharsets["uppercase"]);
+		type = 2;
+	}
+
+	
+	// take 1 to 3 characters? 
+	var nbChars=Math.ceil(Math.random()*3);
+	if ( nbChars > maxLength ) nbChars=maxLength;
+		
+	while ( addOn.length < nbChars){
+		
+		addOn+=""+pickOneFromCharsetWithPreference(allowedCharset,reducedCharset);
+	} 	
+	
+	return easierToRememberPasswordWordRec( allowedCharset, currentWord+addOn, length, type, newLastTaken );
+}
+
+
+
+function easierToRememberPasswordNumber( charset, length ){
+	var currNumber="";
+	
+	// if size is 4, chances for a date 2000's, 1900's ...etc.
+	if ( length == 4 ){
+		if( Math.random() > .7 ) currNumber="20";
+		else if( Math.random() > .7 ) currNumber="19";
+		else if( Math.random() > .8 ) currNumber="18";
+		else if( Math.random() > .8 ) currNumber="17";
+		else if( Math.random() > .8 ) currNumber="21";
+		else if( Math.random() > .8 ) currNumber="16";
+		else if( Math.random() > .8 ) currNumber="15";
+		else if( Math.random() > .8 ) currNumber="14";
+	}
+	
+	while ( currNumber.length < length){
+		currNumber+=""+nextChar(classifiedCharsets["numeric"]);
+	} 
+	return currNumber;
+}
+
+
+
+/**
+ * returns a character in both allowed and preferred charsets. If no common characters preferred, return one from allowed. 
+ */
+function pickOneFromCharsetWithPreference(allowedCharacters, preferredCharacters){
+	var reducedCharset = commonCharset( allowedCharacters, preferredCharacters );
+	if( reducedCharset.length == 0 ){
+		reducedCharset=allowedCharacters;
+	}
+	
+	return nextChar(reducedCharset);
+}
+
+
 
 
 /**
@@ -144,17 +328,33 @@ function checkCompliance( password ){
 	return password;
 }
 
+/**
+ * Adds a character from specified charset to the provided password, by replacing another character
+ * @param {string} charset the set of characters to include a char from
+ * @param {string} password the password to analyze
+ * @type {string} The eventually modified (or not) version of the password
+ */
 function addOneFromCharset( charset, password ){	
 	password = replaceCharAt( password, Math.floor(Math.random() * password.length), nextChar(charset))	;
 	return password;
 } 
 
+/**
+ * Replaces a character at specified index
+ * @param {string} inputStr the set of characters to include a char from
+ * @param {number} index index of the character to replace
+ * @type {string} The  modified version of the string
+ */
 function replaceCharAt(inputStr, index, newChar) {
     var strArray = inputStr.split("");
     strArray[index] = newChar;
     return strArray.join("");
 }
-
+/**
+ * Rate a password using the default strategy
+ * @param {string} password the password being evaluated
+  * @type {object} The password rating
+ */
 function ratePassword( password ){
 	ratings["passwordSize"]=ratePasswordSize(password);
 	ratings["charsets"]=rateCharsets(password);
@@ -173,30 +373,42 @@ function ratePassword( password ){
 	var nbRatings=0;
 	var sumOfRatings=0;
 	var productOfRatings=1;
-	for(var rating in ratings){
-		var oneRating=ratings[rating];
-		console.log("Rating "+rating+ " is :" + ratings[rating]);
+	for(var ratingName in ratings){
+		var oneRating=ratings[ratingName].rating;
 		sumOfRatings+=oneRating;
-		productOfRatings*=Math.pow(oneRating,coefficients[rating]);
-		nbRatings+=coefficients[rating];
+		productOfRatings*=Math.pow(oneRating,coefficients[ratingName]);
+		nbRatings+=coefficients[ratingName];
 	}	
 	//return (sumOfRatings/nbRatings+Math.pow(productOfRatings, 1/3))/2;
-	return Math.pow(productOfRatings, 1.0/nbRatings);
+	var globalRating=Math.pow(productOfRatings, 1.0/nbRatings);
+	return {
+			rating: globalRating,
+			comment: "Aggregate from all individual ratings (size is first criteria)"
+		}
+		
+	
 	
 }
 
-// return a value between 0 and 1 related to the password size
+
+
+/**
+ * Provides a subjective rating of a given password according to its size
+ * @param {string} the password being evaluated
+ * @type {object} The resulting rating
+ */
 function ratePasswordSize( password ){
 	var len = password.length;
-	// lower than 5 is far too low
-	if ( len < 5 ) return 0.01*len;		
-	if ( len < 11 ) return .1*(len-4);
-	if ( len < 20 ) return .6+.03*(len-10);
-	// more than 20 is pretty good
-	if ( len < 30 ) return .90+.01*(len-20);
-	// more than 30 characters = great enthropy
-	if ( len < 50 ) return .99+.0005*(len-30);
-	return 1.0;	
+	
+	// lower than 5 is far too low	
+	if ( len < 5 ) return {rating:0.0, comment: "Password is far too short"};		
+	if ( len < 8 ) return {rating:0.03*len, comment: "Password is too short"};		
+	if ( len < 15 ) return {rating:.4+.05*(len-7), comment: "Password length is questionable"};
+	if ( len < 30 ) return {rating:.8+.01*(len-15), comment: "Password length is pretty good"};	
+	if ( len < 50 ) return {rating:.99+.0005*(len-30), comment: "Password length is awesome... Is is easy to remember?"};
+	return {rating:1.0, comment: "Password length is insane!!"};	
+	
+	
 }
 
 
@@ -206,17 +418,22 @@ function ratePasswordSize( password ){
  * @type {number} The rating, floating point value between 0 and 1
  */
 function rateSequences( password ){
-	var seqLength = findSequences(password).reduce(function(previousValue, currentValue, index, array){
+	
+	var sequences=findSequences(password);
+	var seqLength = sequences.reduce(function(previousValue, currentValue, index, array){
 		return previousValue + currentValue;
 	},"").length;		
+	var seqStr = sequences.reduce(function(previousValue, currentValue, index, array){
+		return previousValue + " / " + currentValue;
+	},"");		
 	var ratio=seqLength/password.length;
-	console.log("Rating for '" +password+ "' len="+ seqLength + " ratio="+ratio);
-	if( ratio <= .1) return 1.0;
-	if( ratio <= .5) return .9-ratio/2;
-	if( ratio <= .6) return .64-(ratio-.5);
-	if( ratio <= .8) return .53-((ratio-.6)*2.0);
-	if ( ratio == 1.0 ) return 0.0;
-	return 0.01;
+	
+	if( ratio <= .1) return {rating:1.0, comment: "Perfect: No (or very few) sequences found"};
+	if( ratio <= .5) return {rating:.9-ratio/2, comment: "Average amount of sequences found: " + seqStr};
+	if( ratio <= .6) return {rating:.64-(ratio-.5), comment: "Impactive amount of sequences found: " + seqStr};
+	if( ratio <= .8) return {rating:.53-((ratio-.6)*2.0), comment: "Too many / long sequences found: " + seqStr};
+	if ( ratio == 1.0 ) return {rating:0.0, comment: "Your password is all sequences: " + seqStr} ;
+	return {rating:0.1, comment: "Too many / long sequences found: " + seqStr};
 	
 	
 }
@@ -229,12 +446,12 @@ function rateSequences( password ){
 function rateKeyboardLayout( password ){
 	var keyboardSequences={};
 	if( !password || password.length==0 ){
-		return 0.0;
+		return {rating: 0.0, comment: "no passwords"};
 	}
 	
-	keyboardSequences["qwerty"]=("qwertyuiop[]asdfghjkl;'#zxcvbnm,./");
-	keyboardSequences["qwertz"]=("qwertzuiopü+asdfghjklöä#<ycxvbnm,.-");
-	keyboardSequences["azerty"]=("azertyuiop^$qsdfghjklmù*<wxcvbn?.:!");
+	keyboardSequences["qwerty"]=("qwertyuiop[]asdfghjkl;'#zxcvbnm,./1234567890");
+	keyboardSequences["qwertz"]=("qwertzuiopü+asdfghjklöä#<ycxvbnm,.-1234567890");
+	keyboardSequences["azerty"]=("azertyuiop^$qsdfghjklmù*<wxcvbn?.:!1234567890");
 	
 	var worstsequence= {
 			length: 0,
@@ -243,28 +460,31 @@ function rateKeyboardLayout( password ){
 		};
 	
 	var passwd=password.toLowerCase(); 
+	var keyboardRecognized="";
 	for(var keyboardseqName in keyboardSequences){
 		var commonality=longestCommonSubstring(passwd, keyboardSequences[keyboardseqName]);
 		if( commonality.length > worstsequence.length){
 			worstsequence=commonality;
+			keyboardRecognized=keyboardseqName;
 		}
 		//console.log( "password : " + commonality.length + " " + commonality.sequence + " keyboard: " + keyboardseqName );
 	}
 	
+	if ( worstsequence.length == 0) return {rating:1.0, comment: "Perfect : no keyboard sequence"} ;		
 	// Less than 3 characters is no problem	
-	if ( worstsequence.length < 3 && password.length > 8 ) return 1.0;			
-	if ( worstsequence.length < 3  ) return 1-worstsequence.length/10;		
+	if ( worstsequence.length < 3 && password.length > 8 ) return {rating:1.0, comment: "Perfect: No (or short enough) keyboard sequences found"};			
+	if ( worstsequence.length < 3  ) return {rating:1-worstsequence.length/10, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence} ;		
 	
 	var indicator=worstsequence.length/password.length;
 	
 	// More than 70% is too much, reduce by 4
-	if ( indicator > .7) 	return (password.length-worstsequence.length)/(4*password.length);
+	if ( indicator > .7) 	return {rating:(password.length-worstsequence.length)/(4*password.length), comment: "Too long keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence};
 	
 	// More than 45% is too much, reduce by 2
-	if ( indicator > .45) 	return (password.length-worstsequence.length)/(2*password.length);
+	if ( indicator > .45) 	return {rating:(password.length-worstsequence.length)/(2*password.length), comment: "Long keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence};
 		
 	// 3 characters  or more depend on password size
-	return (password.length-worstsequence.length)/password.length;
+	return {rating:(password.length-worstsequence.length)/password.length, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence};
 	
 	
 }
@@ -340,35 +560,51 @@ function longestCommonSubstring(str1, str2){
 	};
 }
 
+/**
+ * Provides a subjective rating of a given password according to the different sets of characters in use
+ * @param {string} the password being evaluated
+ * @type {object} The resulting rating
+ */
 function rateCharsets( password ){
 	var charsetCount=0;
+	charsetsStr="";
 	for(var charsetName in availableCharsets){
 		var charset=availableCharsets[charsetName];
 		console.log("check charset " + charsetName + ": " + charset);
-		if( hasOneFromCharset(charset, password) ){
+		if( hasOneFromCharset(charset, password) ){		
 			charsetCount++;
+			charsetsStr+=" / " + charsetName;
 		}		
 	}
 	// less than 2 types of characters is not enough
-	if( charsetCount < 2 ) return 0.01;
+	if( charsetCount < 2 ) return {rating:0.05, comment: "Not enough types of characters types:" + charsetsStr};
 	// 2 types of characters is weak
-	if( charsetCount == 2 ) return .2;
+	if( charsetCount == 2 ) return {rating:.2, comment: "Not enough types of characters types:" + charsetsStr};
 	// 3 types of characters is good enough
-	if( charsetCount == 3 ) return .65;
+	if( charsetCount == 3 ) return {rating:.65, comment: "Average amount of characters types:" + charsetsStr};
 	// More than 3 types of characters is pretty good
-	if( charsetCount == 4 ) return .9;	
+	if( charsetCount == 4 ) return {rating:.9, comment: "Good amount of characters types:" + charsetsStr};	
 	// More than 4 types of characters is perfect
-	return 1.0;
+	return {rating:1.0, comment: "Perfect amount of characters types:" + charsetsStr};	
+	
 	
 }
 
-
+/**
+ * Provides a subjective rating of a given password according to the variety of characters
+ * @param {string} the password being evaluated
+ * @type {object} The resulting rating
+ */
 function rateCharacterVariety( password ){	
 	var rate=rawRateCharacterVariety( password );
-	if (rate >= 1.0 ) return 1.0; else return rate;
+	if (rate.rating >= 1.0 ) return {rating: 1.0, comment: rate.comment}; else return rate;
 }
 
-
+/**
+ * Provides a subjective rating of a given password according to the different sets of characters in use
+ * @param {string} the password being evaluated
+ * @type {object} The resulting rating
+ */
 function rawRateCharacterVariety( password ){	
 	var differentCharacters={};
 	for (var i=0;i<password.length;i++) {  
@@ -377,17 +613,20 @@ function rawRateCharacterVariety( password ){
 	var nbDifferentCharacters=Object.keys(differentCharacters).length;	
 	var variation=nbDifferentCharacters/password.length;
 	
+	// lower too short password ratings
+	if( password.length < 5 )
+		variation = variation*.25;
+	if( password.length < 10 )
+		variation = variation*.8;
+	if( password.length < 15 )
+		variation = variation*.9;
 	
-	// less than 10% variation is not enough
-	if (variation<.1) return 0.01*nbDifferentCharacters/10.0;
-	// less than 50% variation is weak
-	if (variation<.5) return variation/2*nbDifferentCharacters/10.0;
-	// 50-85% variation is good enough
-	if (variation<.91) return variation*nbDifferentCharacters/10.0;
-	// 91-95% variation is perfect
-	if (variation<.99) return 1.0;
-	// close to 100% variation is a little bit worse, a bit of repetition makes assessment harder
-	return .95*nbDifferentCharacters/10.0;
+	
+	if (variation<.1) return {rating: 0.01*nbDifferentCharacters/10.0, comment: "Less than 10% variation of characters is not enough: " + (variation*100).toFixed(2)};	
+	if (variation<.5) return {rating: variation/2*nbDifferentCharacters/10.0, comment: "less than 50% variation is weak: " + (variation*100).toFixed(2)};
+	if (variation<.91) return {rating: variation*nbDifferentCharacters/10.0, comment: "50-90% variation may be good enough: " + (variation*100).toFixed(2)};
+	if (variation<.99) return {rating: 1.0, comment: "91-99% variation is perfect: " + (variation*100).toFixed(2)};
+	return {rating: .95*nbDifferentCharacters/10.0, comment: "99-100% variation is almost perfect: " + (variation*100).toFixed(2)};
 }
 
 
@@ -477,6 +716,11 @@ function findSequences( password ){
 	return sequences;
 }
 
+/**
+ * Provides a subjective description of password security
+ * @param {object} the password rating
+ * @type {string} The resulting description
+ */
 function passwordStrengthDescFromRate(rate){
 	if( rate < .5) return "Unsafe";
 	if( rate < .6) return "Weak";
@@ -486,10 +730,24 @@ function passwordStrengthDescFromRate(rate){
 	return "N/A";
 }
 
-
+/**
+ * Generates a password of a given size
+ * @param {number} the size of the requested password
+ * @type {string} The generated password
+ */
 function makePasswordWithSize( passwdSize ){
-	var passwd="";
 	var charset=prepareCharset();
+	
+	if ( easyPasswordRequested ) return easierToRememberPassword( charset, passwdSize,"","");
+	else return makeAnyPasswordWithSize(charset, passwdSize);
+	
+}
+
+
+
+function makeAnyPasswordWithSize( charset, passwdSize ){
+	var passwd="";
+	
 	for (var i=0;i<passwdSize;i++) {
 		var newChar=nextChar( charset )
 		passwd+=newChar;
@@ -499,4 +757,3 @@ function makePasswordWithSize( passwdSize ){
 	}
 	return checkCompliance(passwd);
 }
-

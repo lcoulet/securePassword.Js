@@ -13,31 +13,31 @@ test( "ShouldFind1Sequence", function() {
 });
 
 test( "ShouldRateAllSequencePoorly", function() {
-	QUnit.close( rateSequences("abcdefABCDEF123456"), 0.01, .00001, "Should rate the all sequences string with 0.01" );
+	QUnit.close( rateSequences("abcdefABCDEF123456").rating, 0.00, .00001, "Should rate the all sequences string with 0.01" );
 });
 
 test( "ShouldRateNoSequenceWith1", function() {
-	QUnit.close( rateSequences("a1b2c3d4e5f6A7B8C9D0EaFb1c2d3e4f5g6"), 1.0, .00001, "Should rate no sequences string with 1.0" );
+	QUnit.close( rateSequences("a1b2c3d4e5f6A7B8C9D0EaFb1c2d3e4f5g6").rating, 1.0, .00001, "Should rate no sequences string with 1.0" );
 });
 
 test( "ShouldRate50PercSequence", function() {
-	QUnit.close( rateSequences("abcdefksd;cm"), .65,.00001, "Should rate 50% sequences string with 0.65" );
+	QUnit.close( rateSequences("abcdefksd;cm").rating, .65,.00001, "Should rate 50% sequences string with 0.65" );
 });
 
 test( "ShouldRate10percSequenceWith1", function() {
-	QUnit.close( rateSequences("abd;cmbgnhmjliptkrhe"), 1.0, .00001, "Should rate 10% sequences string with 1" );
+	QUnit.close( rateSequences("abd;cmbgnhmjliptkrhe").rating, 1.0, .00001, "Should rate 10% sequences string with 1" );
 });
 
 test( "ShouldRate70PercSequence", function() {
-	QUnit.close( rateSequences("abcdefg,1."), .33, .00001, "Should rate 70% sequences string with .33" );
+	QUnit.close( rateSequences("abcdefg,1.").rating, .33, .00001, "Should rate 70% sequences string with .33" );
 });
 
 test( "ShouldRate60PercSequence", function() {
-	QUnit.close( rateSequences("abcdef,1.s"), .54, .00001, "Should rate 60% sequences string with .54" );
+	QUnit.close( rateSequences("abcdef,1.s").rating, .54, .00001, "Should rate 60% sequences string with .54" );
 });
 
 test( "ShouldRate58PercSequence", function() {
-	QUnit.close( rateSequences("abcdefg1.,1."), .5566, .0001, "Should rate 58% sequences string with .5566" );
+	QUnit.close( rateSequences("abcdefg1.,1.").rating, .5566, .0001, "Should rate 58% sequences string with .5566" );
 });
 
 test( "ShouldFind1FromCharsetA", function() {
@@ -61,34 +61,34 @@ test( "longestCommonSubstringANotherTest", function() {
 });
 
 test( "rateKeyboardLayoutZeroTest", function() {
-	deepEqual( rateKeyboardLayout(""), 0 , "rateKeyboardLayout: should rate no password " );
+	deepEqual( rateKeyboardLayout("").rating, 0 , "rateKeyboardLayout: should rate no password " );
 });
 
 test( "rateKeyboardLayoutNoCommonalityTest", function() {
-	deepEqual( rateKeyboardLayout("1f2s3qpfd"), 1.0 , "rateKeyboardLayout: should rate good password " );
+	deepEqual( rateKeyboardLayout("1f2s3qpfd").rating, 1.0 , "rateKeyboardLayout: should rate good password " );
 });
 
 test( "rateKeyboardLayoutLowCommonalityQWERTYTest", function() {
-	QUnit.close( rateKeyboardLayout("12qwerty.1235df"), .6, .00001 , "rateKeyboardLayout: should rate medium password " );
+	QUnit.close( rateKeyboardLayout("12qwerty.1235df").rating, .6, .00001 , "rateKeyboardLayout: should rate medium password " );
 });
 
 test( "rateKeyboardLayoutLowCommonalityAZERTYTest", function() {
-	QUnit.close( rateKeyboardLayout("12azerty.1235df"), .6, .00001 , "rateKeyboardLayout: should rate medium password " );
+	QUnit.close( rateKeyboardLayout("12azerty.1235df").rating, .6, .00001 , "rateKeyboardLayout: should rate medium password " );
 });
 
 
 test( "rateKeyboardLayoutLowCommonalityQWERTZTest", function() {
-	QUnit.close( rateKeyboardLayout("12ycxvbn.1235df"), .6, .00001 , "rateKeyboardLayout: should rate medium password " );
+	QUnit.close( rateKeyboardLayout("12ycxvbn.1235df").rating, .6, .00001 , "rateKeyboardLayout: should rate medium password " );
 });
 
 
 test( "rateKeyboardLayoutHighCommonalityQWERTZTest", function() {
-	QUnit.close( rateKeyboardLayout("12ycxvbn.12"), .2272, .0001 , "rateKeyboardLayout: should rate low password " );
+	QUnit.close( rateKeyboardLayout("12ycxvbn.12").rating, .2272, .0001 , "rateKeyboardLayout: should rate low password " );
 });
 
 
 test( "rateKeyboardLayoutVeryHighCommonalityQWERTZTest", function() {
-	QUnit.close( rateKeyboardLayout("1asdfghjkl."), .04545, .00001 , "rateKeyboardLayout: should rate low password " );
+	QUnit.close( rateKeyboardLayout("1asdfghjkl.").rating, .04545, .00001 , "rateKeyboardLayout: should rate low password " );
 });
 
 

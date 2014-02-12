@@ -63,11 +63,25 @@ function buildTestButton( elementID ){
 function buildOptionsForm( elementID ){	
 	var checkboxId="repeatAllowed";
 	var checkboxEnabled='checked="yes"';
+	var checkboxDisabled='';
 	$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxEnabled+'/><label for="'+checkboxId+'">Allow character repetition</label><br />');		 
 	 $('#'+checkboxId).change(function(){
 		if( this.checked ) allowCharacterRepetition=true; else allowCharacterRepetition=false;
 	});
-	$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="10" type="number" min="1" max="255" required/>');
+	
+	checkboxId="easierPattern";	
+	$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxDisabled+'/><label for="'+checkboxId+'">Make pattern easier to remember (character repetition would be allowed)</label><br />');		 
+	 $('#'+checkboxId).change(function(){
+		if( this.checked ) {
+			easyPasswordRequested=true ;
+			document.getElementById("repeatAllowed").disabled=true;
+		}else {easyPasswordRequested=false; 
+			document.getElementById("repeatAllowed").disabled=false;
+		}
+	});
+	document.getElementById("repeatAllowed").disabled=false;
+	
+	$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="15" type="number" min="1" max="255" required/>');
 	var spinner = $( "#spinner" ).spinner({
 		min: 5,
 		max: 1000,
@@ -105,7 +119,7 @@ function showRatings(){
 		var elemIDc="#r"+rating+"Col";
 		var elemIDr="#r"+rating+"Txt";
 		var elemIDv="#r"+rating+"Val";
-		console.log(elemIDr+", "+elemIDv+", "+elemIDc+", "+oneRating );
+		//console.log(elemIDr+", "+elemIDv+", "+elemIDc+", "+oneRating );
 		showRatingElement(elemIDr,elemIDv,elemIDc,oneRating );
 	}
 }
@@ -127,16 +141,16 @@ function testPassword(passwd){
 	showRatingElement("#passwordRate","#passwordRateValue","#coloredRate",rate);
 	showRatings();
 	if ( typeof gauge !== 'undefined'){
-		gauge.set(rate*100);
+		gauge.set(rate.rating*100);
 	}
 }
 
 
-function showRatingElement( passwordRateEID, passwordRateValueEID, coloredRateEID, rate){
-	console.log(passwordRateEID, passwordRateValueEID, coloredRateEID, rate);
-	$(coloredRateEID).attr('class', passwordStrengthDescFromRate(rate));
-	$(passwordRateEID).text(""+passwordStrengthDescFromRate(rate)); 
-	$(passwordRateValueEID).text(" ("+(rate*100).toFixed(2)+"%)"); 				
+function showRatingElement( passwordRateEID, passwordRateValueEID, coloredRateEID, evaluation){
+	//console.log(passwordRateEID, passwordRateValueEID, coloredRateEID, rate);
+	$(coloredRateEID).attr('class', passwordStrengthDescFromRate(evaluation.rating));
+	$(passwordRateEID).text(""+passwordStrengthDescFromRate(evaluation.rating)); 
+	$(passwordRateValueEID).text(" ("+(evaluation.rating*100).toFixed(2)+"%)" + " - " + evaluation.comment ); 				
 	
 }
 

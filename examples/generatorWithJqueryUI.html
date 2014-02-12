@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2" />
-		<title>SimplePassGen</title>
+		<title>Javascript Password Generator</title>
 		<script type="text/javascript" src="../js/passgen.js"></script>
 		<script type="text/javascript" src="../js/passgen-ui.js"></script>
-		<script type="text/javascript" src="../js/gauge.min.js"></script>
+		<script type="text/javascript" src="../libraries/gauge.min.js"></script>
 		<link rel="stylesheet" href="../css/style.css" />
 		<link rel="stylesheet" href="../css/ui-darkness/jquery-ui.custom.css" />
 		<script src="../libraries/jquery.min.js"></script>
@@ -14,6 +14,7 @@
 	<body>
 		
 		<div id="container">
+		<h1>Need password?</h1>
 		<div id="leftDiv">
 		<form id="charsetsSelector"></form>
 		<br />
@@ -22,15 +23,15 @@
 		
 		
 		<br />
-		<input type="submit" value="Generate" id="generateButton">
-		<br />
+		<input type="submit" value="Generate" id="generateButton"> - or - <input type="submit" value="Test password below" id="testButton">
+		<br /><br />
 		
-		Password: <input type="text" id="generatedPassword"></input><br />
-		<input type="submit" value="Test again" id="testButton">
+		<h2>Password: <input type="text" id="generatedPassword"></input></h2>
+		
 		</div>
 		
 		<div id="rightDiv">
-		<div id="gaugeDiv"><canvas id="gauge" width="220" height="150"></canvas></div>
+		<div id="gaugeDiv" align="center"><canvas id="gauge" width="220" height="150"></canvas></div>
 		
 		<div id="coloredRate">
 		Security Rate: <span id="passwordRate"></span> <span id="passwordRateValue"></span><br />
@@ -48,8 +49,7 @@
 		   buildGenerateButton("#generateButton");
 		   buildGaugeElement("gauge");
 		   buildTestButton("#testButton");
-		    
-           
+		               
 		</script>
 		</div>
 		
