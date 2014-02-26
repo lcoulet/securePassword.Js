@@ -1,26 +1,47 @@
+
 # Password Generator and password meter
 
-[Example page](http://iolco51.free.fr/) using this tool for generation and rating of passwords.  
+Please look at the [Example page](http://iolco51.free.fr/) showing this tool for generation and rating of passwords.  
 
 ## General information
 
-Password generator is entirely in javascript. 
+Password generator is entirely in javascript and has very few dependences. 
+
+only the **js** folder contains the utility, other directories are unit tests, examples and dependencies and not necessarily relevant for using the tool.
 
 There are three components:
 
-* Password generation engine
-* Password rating engine
-* UI engine
-
-UI has few dependencies:
-* JQuery
-* JQuery-UI
-* gauge.coffee
-* i18next.js 
+* Password generation engine: in js/passgen.js
+* Password rating engine: in js/passgen.js
+* UI engine: in js/passgen-ui.js
 
 
-Password generation and rating should have fewer dependences: 
-* i18next.js (for internationalization not implemented) 
+Other directories:
+
+* **examples**: example HTML pages
+* **css**: css for example pages
+* **img**: image for the example pages
+* **libraries**: third party javascript libraries (for UI)
+* **test**: unit tests 
+
+## Quick start
+
+Load passgen.js and call makePassword(<size>) to generate a password of any size.
+
+
+Example in HTML:
+
+	<head>
+		<title>SimplePassGen</title>
+		<script type="text/javascript" src="../js/passgen.js"></script>
+	</head>
+	<body>
+		<script>
+           document.write("Password: " + makePassword(10));
+		</script>
+	</body> 
+
+
 
 
 ## Generator
@@ -56,9 +77,23 @@ The rating is entirely subjective, inspired from many password security rules fo
 * **keymaps**: The sequences matchning a keyboard keymap compared to the length of the password (e.g. qwertyuiop, asdfgh ...etc.)     
 * **dictionary**: not implemented yet. The length of the longest dictionary word recognized compared to password length
 
+## Dependencies
+
+Password generation and rating have no dependencies yet, they should have only one dependency when internationalization will be implemented: 
+* **i18next.js** (for internationalizationm but not implemented) 
+
+
+UI has very few dependencies:
+* **JQuery**
+* **JQuery-UI** 
+* **gauge.coffee** (for the rating gauge)
+* **i18next.js** (for internationalizationm but not implemented)
+
+
+
 ## password UI 
 
-A UI library using JQuery is being provided.
+As already mentioned, an UI library using JQuery is being provided.
 
 
 The UI needs the following HTML elements IDs (DIV or SPAN):  
@@ -126,11 +161,10 @@ Example:
 Unit tests are provided, most non-randomized functions are tested using unit tests.
 Unit tests depend on QUnit javascript framework.
 Simply open __[test/passgentests.html](test/passgentests.html)__ file to see results
-  
+ 
 
 
-
-## TODO list
+## TODO list / missing features
 
 * Add internationalization
 * Add dictionary rating 
@@ -139,6 +173,6 @@ Simply open __[test/passgentests.html](test/passgentests.html)__ file to see res
 * Allow custom charset
 * Make sure that there's no duplicates characters with selected charsets when using a custom charset
 * Remove dependency to hardcoded element IDs
-* Improve Javascript : Better structure, lower repetition, use objects
+* Improve Javascript : Better structure, lower repetition, use parametereized objects instead of global variables
 * Implement dictionary lookup as bloom filter?  
 * Add support for other rating policies
