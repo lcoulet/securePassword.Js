@@ -113,13 +113,11 @@ function buildRatingElements(elementID){
 	}
 }
 function showRatings(){		
-
 	for(var rating in ratings){
 		var oneRating=ratings[rating];
 		var elemIDc="#r"+rating+"Col";
 		var elemIDr="#r"+rating+"Txt";
 		var elemIDv="#r"+rating+"Val";
-		//console.log(elemIDr+", "+elemIDv+", "+elemIDc+", "+oneRating );
 		showRatingElement(elemIDr,elemIDv,elemIDc,oneRating );
 	}
 }
@@ -147,10 +145,8 @@ function testPassword(passwd){
 
 
 function showRatingElement( passwordRateEID, passwordRateValueEID, coloredRateEID, evaluation){
-	//console.log(passwordRateEID, passwordRateValueEID, coloredRateEID, rate);
 	$(coloredRateEID).attr('class', passwordStrengthDescFromRate(evaluation.rating));
 	$(passwordRateEID).text(""+passwordStrengthDescFromRate(evaluation.rating)); 
 	$(passwordRateValueEID).text(" ("+(evaluation.rating*100).toFixed(2)+"%)" + " - " + evaluation.comment ); 				
-	
 }
 

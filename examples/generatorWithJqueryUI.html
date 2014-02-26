@@ -8,8 +8,8 @@
 		<script type="text/javascript" src="../libraries/gauge.min.js"></script>
 		<link rel="stylesheet" href="../css/style.css" />
 		<link rel="stylesheet" href="../css/ui-darkness/jquery-ui.custom.css" />
-		<script src="../libraries/jquery.min.js"></script>
-		<script src="../libraries/jquery-ui.custom.min.js"></script>		
+		<script type="text/javascript" src="../libraries/jquery.min.js"></script>
+		<script type="text/javascript" src="../libraries/jquery-ui.custom.min.js"></script>		
 	</head>
 	<body>
 		
@@ -23,7 +23,7 @@
 		
 		
 		<br />
-		<input type="submit" value="Generate" id="generateButton"> - or - <input type="submit" value="Test password below" id="testButton">
+		<input type="submit" value="Generate a new password" id="generateButton"> - or - <input type="submit" value="Test password below" id="testButton">
 		<br /><br />
 		
 		<h2>Password: <input type="text" id="generatedPassword"></input></h2>
@@ -42,13 +42,14 @@
 		</div>
 		
 		<script>
-		   
-		   buildCharsetsForm("#charsetsSelector");
+		$( document ).ready(function() {
+			buildCharsetsForm("#charsetsSelector");
 		   buildOptionsForm("#optionsSelector");
 		   buildRatingElements("#ratingDetails");
 		   buildGenerateButton("#generateButton");
 		   buildGaugeElement("gauge");
 		   buildTestButton("#testButton");
+		});
 		               
 		</script>
 		</div>

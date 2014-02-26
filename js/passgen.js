@@ -401,12 +401,12 @@ function ratePasswordSize( password ){
 	var len = password.length;
 	
 	// lower than 5 is far too low	
-	if ( len < 5 ) return {rating:0.0, comment: "Password is far too short"};		
-	if ( len < 8 ) return {rating:0.03*len, comment: "Password is too short"};		
-	if ( len < 15 ) return {rating:.4+.05*(len-7), comment: "Password length is questionable"};
-	if ( len < 30 ) return {rating:.8+.01*(len-15), comment: "Password length is pretty good"};	
-	if ( len < 50 ) return {rating:.99+.0005*(len-30), comment: "Password length is awesome... Is is easy to remember?"};
-	return {rating:1.0, comment: "Password length is insane!!"};	
+	if ( len < 5 ) return {rating:0.0, comment: "Password is far too short: "+len};		
+	if ( len < 8 ) return {rating:0.03*len, comment: "Password is too short: "+len};		
+	if ( len < 15 ) return {rating:.4+.05*(len-7), comment: "Password length is questionable: "+len};
+	if ( len < 30 ) return {rating:.8+.01*(len-15), comment: "Password length is pretty good: "+len};	
+	if ( len < 50 ) return {rating:.99+.0005*(len-30), comment: "Password length is awesome... Is is easy to remember?: "+len};
+	return {rating:1.0, comment: "Password length is insane!!: "+len};	
 	
 	
 }
@@ -473,18 +473,18 @@ function rateKeyboardLayout( password ){
 	if ( worstsequence.length == 0) return {rating:1.0, comment: "Perfect : no keyboard sequence"} ;		
 	// Less than 3 characters is no problem	
 	if ( worstsequence.length < 3 && password.length > 8 ) return {rating:1.0, comment: "Perfect: No (or short enough) keyboard sequences found"};			
-	if ( worstsequence.length < 3  ) return {rating:1-worstsequence.length/10, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence} ;		
+	if ( worstsequence.length < 3  ) return {rating:1-worstsequence.length/10, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, \"" + worstsequence.sequence+'"'};		
 	
 	var indicator=worstsequence.length/password.length;
 	
 	// More than 70% is too much, reduce by 4
-	if ( indicator > .7) 	return {rating:(password.length-worstsequence.length)/(4*password.length), comment: "Too long keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence};
+	if ( indicator > .7) 	return {rating:(password.length-worstsequence.length)/(4*password.length), comment: "Too long keyboard sequence: \"" + keyboardRecognized  + " layout, " + worstsequence.sequence+'"'};
 	
 	// More than 45% is too much, reduce by 2
-	if ( indicator > .45) 	return {rating:(password.length-worstsequence.length)/(2*password.length), comment: "Long keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence};
+	if ( indicator > .45) 	return {rating:(password.length-worstsequence.length)/(2*password.length), comment: "Long keyboard sequence: \"" + keyboardRecognized  + " layout, " + worstsequence.sequence+'"'};
 		
 	// 3 characters  or more depend on password size
-	return {rating:(password.length-worstsequence.length)/password.length, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, " + worstsequence};
+	return {rating:(password.length-worstsequence.length)/password.length, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, \"" + worstsequence.sequence+'"'};
 	
 	
 }
