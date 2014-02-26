@@ -1,5 +1,7 @@
 # Password Generator and password meter
 
+[Example page](http://iolco51.free.fr/) using this tool for generation and rating of passwords.  
+
 ## General information
 
 Password generator is entirely in javascript. 
