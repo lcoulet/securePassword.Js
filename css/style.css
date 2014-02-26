@@ -47,7 +47,7 @@ body{
 	font-family:'Helvetica','Myriad Pro','Verdana', sans-serif;
 }
 h1{
-	font-size:70px;
+	font-size:4em;
 	margin-bottom:10px;
 	color:#888;
 	text-shadow: 0 2px 1px #fff;
@@ -70,8 +70,9 @@ input{
 	border-width:1px;
 	color:#FFFFFF;
 	font-size:19px;
-	padding:5px 15px;
+	padding:5px 15px;	
 }
+
 #container{
 	width:960px;
 	 margin:0 auto;
@@ -79,6 +80,12 @@ input{
 
 #generatedPassword{
 	font-size:2em;	
+	background-color:#555555;
+	width: 95%;
+}
+
+.passwordField{
+	background-color:#333333;
 }
 
 #passwordRate{
