@@ -80,11 +80,20 @@ function buildOptionsForm( elementID ){
 		if( this.checked ) {
 			easyPasswordRequested=true ;
 			document.getElementById("repeatAllowed").disabled=true;
+			document.getElementById("easyPatternUsesDict").disabled=false;
 		}else {easyPasswordRequested=false; 
 			document.getElementById("repeatAllowed").disabled=false;
+			document.getElementById("easyPatternUsesDict").disabled=true;
 		}
 	});
 	document.getElementById("repeatAllowed").disabled=false;
+	
+	checkboxId="easyPatternUsesDict";	
+	$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxDisabled+'/><label for="'+checkboxId+'">Use dictionaries for pattern easier to remember (can contain other characters than selected)</label><br />');		 
+	 $('#'+checkboxId).change(function(){
+		if( this.checked ) {easyPasswordUsingDictionary=true ;}else {easyPasswordUsingDictionary=false; }
+	});
+	document.getElementById("easyPatternUsesDict").disabled=true;
 	
 	$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="15" type="number" min="1" max="255" required/>');
 	var spinner = $( "#spinner" ).spinner({

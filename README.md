@@ -58,8 +58,18 @@ Optionally it can avoid character repetition.
 
 * "Easier to remember" password  generator 
 
-This generator generate patterns in the form of randomized (<Text>|<Separator>|<Number>)+ pattern.  
+This generator generate patterns in the form of randomized (Text|Separator|Number)+ pattern.  
 Generated password is easier to remember for a human being, but has less entropy so may be considered weaker.
+
+* "Easier to remember" password  generator using dictionaries 
+
+This generator generate patterns in the form of randomized (Text|Separator|Number)+ pattern.  
+The Text is taken from a dictionary (randomly selected, from any loaded dictionary). 
+
+NOTE: dictionary may contain characters that are in different charsets than those selected. 
+
+Generated password is easier to remember for a human being, but has less entropy so may be considered weaker.
+
 
 
 ## Meter
@@ -78,7 +88,7 @@ The rating is entirely subjective, inspired from many password security rules fo
 
 ## Dictionaries
 
-For size reason only a few hundred common words are provided and pre-loaded (French and English). The included dictionaries include the 6,000 most used words longer than 2 characters according to [Wiktionary Frequency lists](http://en.wiktionary.org/wiki/Wiktionary%3aFrequency_lists) 
+For size reason only a few hundred common words are provided and pre-loaded (French and English). The included dictionaries include  the 6,000 most used words longer than 2 characters for each language, list built according to [Wiktionary Frequency lists](http://en.wiktionary.org/wiki/Wiktionary%3aFrequency_lists) 
 
 One or several dictionaries can be loaded at the same time, and they can be customized or enriched.   
 
@@ -190,8 +200,6 @@ Simply open __[test/passgentests.html](test/passgentests.html)__ file to see res
 ## TODO list / missing features
 
 * Add internationalization
-* Add dictionary rating 
-* Add dictionary generator (even easier to remember)
 * Separate generator and rating in different libraries
 * Allow custom charset
 * Make sure that there's no duplicates characters with selected charsets when using a custom charset

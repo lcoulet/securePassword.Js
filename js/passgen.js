@@ -60,6 +60,7 @@ coefficients["dictionary"]=1;
 
 // The dictionary lookup object
 var dict = {};
+var dictKeys = {};
 
 // Dictonaries
 // English
@@ -83,6 +84,7 @@ loadDictionary(englishdict,"english");
  */
 function unloadDictionary( name ){
 	delete dict[name];
+	delete dictKeys[name];
 }
 
 /**
@@ -91,6 +93,7 @@ function unloadDictionary( name ){
  */
 function unloadAllDictionaries(  ){
 	dict = {};
+	dictKeys={};
 	return dict;
 }
 
@@ -109,9 +112,10 @@ function loadDictionary( dictionary, name ){
     // And add them as properties to the dictionary lookup
     // This will allow for fast lookups later
     for ( var i = 0; i < words.length; i++ ) {
-        dict[ name ][ words[i] ] = true;
-		
+        dict[ name ][ words[i] ] = true;		
     }
+	
+	dictKeys[ name ] = Object.keys(dict[ name ]);
     return dict;
 }
 
@@ -201,6 +205,56 @@ function easierToRememberPassword( allowedCharset, length, password, previous ){
 }
 
 /**
+ * Generates a password supposed to be easier to remember (recursive)
+ * @param {string} allowedCharset Allowed characters
+ * @param {number} length maximal allowed length
+ * @param {string} password the current password ('cause this is recursive)
+ * @param {string} previous last type done ('cause this is recursive)
+ * @type {string} the generated password
+ */
+function easierToRememberPasswordUsingDictionaries( allowedCharset, length, password, previous ){	
+	// if we're done return the generated password
+	if( password.length >= length) return password;
+	
+	// make a word or a number of an arbitrary length (or remaining characters number)
+	// alphabetic words may be longer than numbers
+	var passwordAddon="";
+	var lastItem;
+	var remainingSize = length-password.length;
+	
+	var addonMaxSize=remainingSize ;
+	var addonLength;
+	if ( previous === "word" ){
+		if( addonMaxSize > 6 ) addonMaxSize = 6;
+		// improve chances for a year
+		if( addonMaxSize > 3 ) addonLength=4;
+		if( Math.random() > .6 ) addonLength = Math.ceil( Math.random() * addonMaxSize);
+		
+		
+		//  check if allowed charset contains numbers before adding any
+		if( allowedCharset.indexOf(classifiedCharsets["numeric"]) != -1 )
+			passwordAddon=easierToRememberPasswordNumber(allowedCharset, addonLength );
+		lastItem="number";
+	} else{
+		if( addonMaxSize > length/2 ) addonMaxSize = length/2;
+		// word
+		passwordAddon=easierToRememberPasswordWordFromDictionary( allowedCharset, addonMaxSize );
+		lastItem="word";
+	}
+		
+	
+	// Maybe pick a separator, or an open-close group
+	passwordAddon=addSeparatorOrOpenCloseOrNothing( allowedCharset, length, passwordAddon );
+		
+	// append or prepend to previous password
+	var newPassword=appendOrPrepend(password,passwordAddon );
+	
+	// recursive call, do this amn arbitrary number of times until length is Ok		
+	return easierToRememberPasswordUsingDictionaries(allowedCharset, length, newPassword, lastItem )
+}
+
+
+/**
  * Adds a separator character to a string
  * @param {string} allowedCharset Allowed characters
  * @param {number} maxLength maximal allowed length
@@ -268,6 +322,67 @@ function easierToRememberPasswordWord( allowedCharset, length ){
 	var type = Math.ceil(Math.random()*3);
 	
 	return easierToRememberPasswordWordRec( allowedCharset, "", length, type, Math.ceil(Math.random()*2) );
+	
+}
+
+
+/**
+ * Gets a word from dictionary 
+ * @param {string} allowedCharset The characters of the custom charset
+ * @param {number} length The maximal Length of the word
+ * @type {string} the generated word
+ */
+function easierToRememberPasswordWordFromDictionary( allowedCharset, length ){		
+	var dictWord="";
+	if( length > 3) {
+		var i=0;
+		dictWord=pickAWordFromDictionary(pickADictionary());
+		// try 300 times max, if it doesn't work let's assume the dictionary is weak or words 
+		//   shorter than x chars
+		while ( i<300 ){
+			dictWord=pickAWordFromDictionary(pickADictionary());			
+			if( dictWord.length <= length  ){
+				// randomly create uppercase or first letter capitalized word
+				if( Math.random() > (2/3) ){
+					dictWord=capitaliseFirstLetter(dictWord);
+				}
+				if( Math.random() > (7/9) ){
+					dictWord=dictWord.toUpperCase();
+				}
+				return dictWord;
+			}
+		}
+	}
+	// by default build a random word
+	return easierToRememberPasswordWord(allowedCharset, length);
+}
+
+/**
+ * Returns the same word with the first character in uppercase
+ * @type {string} string the string to modify
+ * @type {string} the modified string
+ */
+function capitaliseFirstLetter(string){
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/**
+ * Returns a name of a loaded  dictionnary (randomly)
+ * @type {string} the dictionary name
+ */
+function pickADictionary(  ){	
+	var dictNames = Object.keys(dict);
+	return dictNames[ dictNames.length * Math.random() << 0 ];
+	
+}
+/**
+ * Returns a word from a loaded  dictionnary (randomly chosen)
+ * @param {string} dictionaryName the dictionary name
+ * @type {string} the selected word
+ */
+function pickAWordFromDictionary( dictionaryName ){	
+	console.log(" Dict " + dictionaryName + " length " + dictKeys[dictionaryName].length );
+	return dictKeys[dictionaryName][ dictKeys[dictionaryName].length * Math.random() << 0 ];
 	
 }
 
@@ -920,6 +1035,7 @@ function passwordStrengthDescFromRate(rate){
 function makePasswordWithSize( passwdSize ){
 	var charset=prepareCharset();
 	
+	if ( easyPasswordRequested && easyPasswordUsingDictionary) return easierToRememberPasswordUsingDictionaries( charset, passwdSize,"","");
 	if ( easyPasswordRequested ) return easierToRememberPassword( charset, passwdSize,"","");
 	else return makeAnyPasswordWithSize(charset, passwdSize);
 	
