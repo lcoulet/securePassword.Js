@@ -646,7 +646,7 @@ function ratePassword( password ){
  * @type {object} The resulting rating
  */
 function rateDictionary(password, dictionary){
-	
+	password=password.toLowerCase();
     var curLetters = password.slice( 0 ), word = "";
     var foundWords=[];
 	var maxWord={word:"",dictionary:""};
