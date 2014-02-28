@@ -91,4 +91,35 @@ test( "rateKeyboardLayoutVeryHighCommonalityQWERTZTest", function() {
 	QUnit.close( rateKeyboardLayout("1asdfghjkl.").rating, .04545, .00001 , "rateKeyboardLayout: should rate low password " );
 });
 
+unloadAllDictionaries();
+var minifrenchdict=	"bleu super autre bizarre difficile machin machine drôle étrange facile grave impossible jeune juste libre malade même pauvre possible propre rouge sale simple tranquille triste vide bonne toute doux faux français gros heureux mauvais sérieux vieux vrai ancien beau blanc certain chaud cher clair content dernier désolé différent entier fort froid gentil haut humain important joli léger meilleur mort pareil plein prêt prochain quoi vert vivant aide chef enfant garde gauche geste gosse livre merci ombre part poche professeur tour fois madame paix voix affaire année arme armée attention balle boîte bouche carte cause chambre chance chose classe confiance couleur cour cuisine dame dent droite école église envie épaule époque équipe erreur espèce face façon faim famille faute femme fenêtre fête fille fleur force forme guerre gueule habitude heure histoire idée image impression jambe joie journée langue lettre lèvre ligne lumière main maison maman manière marche merde mère minute musique nuit odeur oreille parole partie peau peine pensée personne peur photo pièce pierre place police porte présence prison putain question raison réponse robe route salle scène seconde sécurité semaine situation soeur soirée sorte suite table terre tête vérité ville voiture avis bois bras choix corps cours gars mois pays prix propos sens temps travers accord agent amour appel arbre argent avenir avion bateau bébé besoin bonheur bonjour bord boulot bout bruit bureau café camp capitaine chat chemin chéri cheval cheveu chien ciel client cœur coin colonel compte copain côté coup courant début départ dieu docteur doigt dollar doute droit effet endroit ennemi escalier esprit état exemple fait film flic fond frère front garçon général genre goût gouvernement grand groupe homme honneur hôtel instant intérêt intérieur jardin jour journal lieu long maître mari mariage matin médecin mètre milieu million moment monde monsieur mouvement moyen noir nouveau numéro oeil oiseau oncle ordre papa papier parent passage passé patron père petit peuple pied plaisir plan point pouvoir premier présent président prince problème quartier rapport regard reste retard retour rêve revoir salut sang secret seigneur sentiment service seul siècle signe silence soir soldat soleil sujet téléphone tout train travail trou truc type vent ventre verre village visage voyage fils gens abandonner accepter accompagner acheter adorer agir aider aimer ajouter aller amener amuser annoncer apercevoir apparaître appeler apporter apprendre approcher arranger arrêter arriver asseoir assurer attaquer atteindre attendre avancer avoir baisser battre boire bouger brûler cacher calmer casser cesser changer chanter charger chercher choisir commencer comprendre compter conduire connaître continuer coucher couper courir couvrir craindre crier croire danser décider découvrir dégager demander descendre désoler détester détruire devenir deviner devoir dire disparaître donner dormir échapper écouter écrire éloigner embrasser emmener empêcher emporter enlever entendre entrer envoyer espérer essayer être éviter excuser exister expliquer faire falloir fermer filer finir foutre frapper gagner garder glisser habiter ignorer imaginer importer inquiéter installer intéresser inviter jeter jouer jurer lâcher laisser lancer lever lire maintenir manger manquer marcher marier mener mentir mettre monter montrer mourir naître obliger occuper offrir oser oublier ouvrir paraître parler partir passer payer penser perdre permettre plaire pleurer porter poser pousser préférer prendre préparer présenter prévenir prier promettre proposer protéger quitter raconter ramener rappeler recevoir reconnaître réfléchir refuser regarder rejoindre remarquer remettre remonter rencontrer rendre rentrer répéter répondre reposer reprendre ressembler rester retenir retirer retourner retrouver réussir réveiller revenir rêver rire risquer rouler sauter sauver savoir sembler sentir séparer serrer servir sortir souffrir sourire souvenir suffire suivre taire tendre tenir tenter terminer tirer tomber toucher tourner traîner traiter travailler traverser tromper trouver tuer utiliser valoir vendre venir vivre voir voler vouloir";
 
+test( "loadDictionaryTest", function() {
+	deepEqual( Object.keys(loadDictionary( minifrenchdict, "french")["french"]).length, 584 , "loadDictionaryTest: should have 600 words" );
+});
+
+
+test( "findWord Test: should find matching word", function() {
+	deepEqual( findWord("vieux",loadDictionary( minifrenchdict, "french")), {word:"vieux",dictionary:"french"} , "findWord Test: should find matching word" );
+});
+
+test( "findWord Test: should not find missing word", function() {
+	deepEqual( findWord("obshedjs",loadDictionary( minifrenchdict, "french")), {word:"",dictionary:""} , "findWord Test: should not find missing word" );
+});
+
+test( "findWord Test: should find longest starting matching word", function() {
+	deepEqual( findWord("vieuxobshedjs",loadDictionary(minifrenchdict, "french")), {word:"vieux",dictionary:"french"} , "findWord Test: should not find missing word" );
+});
+
+test( "rateDictionary : should rate no word", function() {
+	QUnit.close( rateDictionary("b/s2h,e.d/j@s",loadDictionary(minifrenchdict, "french")).rating,  1.0, .00001 , "rateDictionary Test: should rate good password" );
+});
+
+test( "rateDictionary : should rate one word badly", function() {
+	QUnit.close( rateDictionary("vieux",loadDictionary(minifrenchdict, "french")).rating, 0.01, .00001 , "rateDictionary Test: should rate one word badly" );
+});
+
+
+test( "rateDictionary : should rate not only one word ", function() {
+	QUnit.close( rateDictionary("vieuxmachin",loadDictionary(minifrenchdict, "french")).rating, 0.40, .01 , "rateDictionary Test: should rate not only one word" );
+});
