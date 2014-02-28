@@ -75,16 +75,32 @@ var frenchdict="les des une que est pour qui dans par plus pas sur sont Les avec
 loadDictionary(frenchdict,"french");
 loadDictionary(englishdict,"english");
 
+
+/**
+ * Unloads a dictionary in the dictionaries set
+ * @param {string} name The name of the removed words list
+ * @type {object} The new dictionaries set
+ */
 function unloadDictionary( name ){
 	delete dict[name];
 }
 
+/**
+ * Unloads any dictionary in the dictionaries set
+ * @type {object} The new dictionaries set
+ */
 function unloadAllDictionaries(  ){
 	dict = {};
+	return dict;
 }
 
 
-
+/**
+ * Loads a dictionary in the dictionaries set
+ * @param {string} dictionary The string to look into
+ * @param {string} name The name of the added words list
+ * @type {object} The new dictionaries set
+ */
 function loadDictionary( dictionary, name ){
 	dict[ name ]={};
 	// Get an array of all the words
@@ -99,9 +115,13 @@ function loadDictionary( dictionary, name ){
     return dict;
 }
 
-// Takes in an array of letters and finds the longest
-// possible word at the front of the letters
-// from http://ejohn.org/blog/dictionary-lookups-in-javascript/
+/**
+ * Takes in an array of letters and finds the longest possible word at the front of the letters
+ * Courtesy from John Resig @ http://ejohn.org/blog/dictionary-lookups-in-javascript/
+ * @param {string} letters The string to look into
+ * @param {object} dict The dictionary set to use for lookup
+ * @type {object} object containing the longest word and the name of matching dictionary
+ */
 function findWord( letters, dict ) {
 	
 	// Clone the array for manipulation
@@ -130,6 +150,14 @@ function findWord( letters, dict ) {
 	return {word:"",dictionary:""};
 }
 
+/**
+ * Generates a password supposed to be easier to remember (recursive)
+ * @param {string} allowedCharset Allowed characters
+ * @param {number} length maximal allowed length
+ * @param {string} password the current password ('cause this is recursive)
+ * @param {string} previous last type done ('cause this is recursive)
+ * @type {string} the generated password
+ */
 function easierToRememberPassword( allowedCharset, length, password, previous ){	
 	// if we're done return the generated password
 	if( password.length >= length) return password;
@@ -172,6 +200,13 @@ function easierToRememberPassword( allowedCharset, length, password, previous ){
 	return easierToRememberPassword(allowedCharset, length, newPassword, lastItem )
 }
 
+/**
+ * Adds a separator character to a string
+ * @param {string} allowedCharset Allowed characters
+ * @param {number} maxLength maximal allowed length
+ * @param {string} currentPassword the string that may be modified
+ * @type {string} the modified string
+ */
 function addSeparatorOrOpenCloseOrNothing( allowedCharset, maxLength, currentPassword){
 	var remainingLength=maxLength-currentPassword.length;
 	
@@ -196,6 +231,12 @@ function addSeparatorOrOpenCloseOrNothing( allowedCharset, maxLength, currentPas
 	return currentPassword;
 }	
 
+/**
+ * Gets the common part of two distinct strings
+ * @param {string} charset1 One string
+ * @param {string} charset2 Another string
+ * @type {string} the common set of characters as a string
+ */
 function commonCharset( charset1, charset2){
 	var returnCharset="";
 	for ( var i = 0; i < charset1.length; i++ )
@@ -206,6 +247,12 @@ function commonCharset( charset1, charset2){
 	return returnCharset;
 }
 
+/**
+ * Concatenate two strings, by adding something before or after (randomized) the existing.
+ * @param {string} existing the base string
+ * @param {string} addon The part to append to the existing string
+ * @type {string} the generated word
+ */
 function appendOrPrepend( existing, addon){
 	if ( Math.random() > .5) return addon + existing;  
 	return existing+addon;
@@ -264,7 +311,6 @@ function easierToRememberPasswordWordRec( allowedCharset, currentWord, length, t
 		type = 2;
 	}
 
-	
 	// take 1 to 3 characters? 
 	var nbChars=Math.ceil(Math.random()*3);
 	if ( nbChars > maxLength ) nbChars=maxLength;
@@ -456,14 +502,12 @@ function ratePassword( password ){
 	ratings["keyboard"]=rateKeyboardLayout(password);
 	ratings["dictionary"]=rateDictionary(password, dict);
 	
-	
 	coefficients["passwordSize"]=4;
 	coefficients["charsets"]=1;
 	coefficients["characterVariety"]=1;
 	coefficients["sequences"]=1;
 	coefficients["keyboard"]=1;
 	coefficients["dictionary"]=1;
-	
 	
 	var nbRatings=0;
 	var sumOfRatings=0;
@@ -480,9 +524,6 @@ function ratePassword( password ){
 			rating: globalRating,
 			comment: "Aggregate from all individual ratings (size is first criteria)"
 		}
-		
-	
-	
 }
 
 /**
@@ -859,7 +900,7 @@ function findSequences( password ){
 
 /**
  * Provides a subjective description of password security
- * @param {object} the password rating
+ * @param {object} rate the password rating
  * @type {string} The resulting description
  */
 function passwordStrengthDescFromRate(rate){
@@ -873,7 +914,7 @@ function passwordStrengthDescFromRate(rate){
 
 /**
  * Generates a password of a given size
- * @param {number} the size of the requested password
+ * @param {number} passwdSize the size of the requested password
  * @type {string} The generated password
  */
 function makePasswordWithSize( passwdSize ){
@@ -885,7 +926,12 @@ function makePasswordWithSize( passwdSize ){
 }
 
 
-
+/**
+ * Generates a password of a given size using a given charset
+ * @param {string} charset the allowed set of characters
+ * @param {number} passwdSize the size of the requested password
+ * @type {string} The generated password
+ */
 function makeAnyPasswordWithSize( charset, passwdSize ){
 	var passwd="";
 	
