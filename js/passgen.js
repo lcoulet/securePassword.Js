@@ -1,13 +1,11 @@
+// Javascript password generator
+//  and Javascript password evaluator
+// Author: L.Coulet, 2014
+// License: Apache 2.0
 
-// Make easy to remember
-//  # short sequence of number
-//  # one punctuation
-//  # two sequences of alpha starting with uppercase and mixing voyels and consons
-// In any order
-
-// Make based on dictionnary
-
-// Or make rough and complex
+// ------------------------------------------------------------------------
+// The globals... THis is not state-of-the-art nut good-enough to start with
+// Javascript ninja may prefer to close their eyes.
 
 var availableCharsets={};
 availableCharsets["alphaLower"]				='abcdefghijklmnopqrstuvwxyz';
@@ -75,6 +73,8 @@ var frenchdict="les des une que est pour qui dans par plus pas sur sont Les avec
 loadDictionary(frenchdict,"french");
 loadDictionary(englishdict,"english");
 
+// Now globals section is finished it's a tiny bit better... Javascript ninja may be able to keep their eyes open now
+// ------------------------------------------------------------------------
 
 /**
  * Unloads a dictionary in the dictionaries set

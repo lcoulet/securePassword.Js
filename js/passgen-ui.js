@@ -1,3 +1,8 @@
+// Javascript password generator UI based on JQuery
+//  and Javascript password evaluator  UI based on JQuery
+// Author: L.Coulet, 2014
+// License: Apache 2.0
+
 var ratingDetails;
 var gauge;
 
