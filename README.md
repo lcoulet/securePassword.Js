@@ -47,6 +47,40 @@ Example in HTML:
 
 There are several generation engines. Some more pluggable engines may be plugged.
 
+Generate a password (one line):
+
+	
+	// Generate a 20 characters password
+	var password=makePasswordWithSize(20);
+
+
+Model selection:
+
+	
+	// all random characters password
+	setEasyPasswordRequested(false);		
+
+	// OR password with patterns making it easier to remember	
+	setEasyPasswordRequested(true);			
+	
+	
+	// only applies if easyPasswordRequested is true, use real words in patterns
+	useDictionaryForEasyPasswordRequested(true);	
+
+Charsets selection:
+
+	// Enable default charsets (not necessary, done automatically)
+	enableDefaultCharsets();
+	
+	// OR enable all available charsets
+	enableAllCharsets();
+
+	// OR enable only required charsets
+	disableCharset("alphaLower");
+	enableCharset("accented");
+
+
+
 * Commonalities
 
 Provided generators have configurable character sets to use at input and expected password length.  
@@ -74,7 +108,24 @@ Generated password is easier to remember for a human being, but has less entropy
 
 ## Meter
 
-Password rating is defined within a rating policy object.
+Password rating is defined within a rating policy object that is not yet fully implented and configurable.
+
+Rating is composed of criteria that return a note and a comment, an aggregate is computed for a general note and a general comment. 
+
+Rate a password:
+	
+	// rate the password 
+	var rating=ratePassword("myPasswordToBeAnalyzed");
+	
+	// get rating value
+	var passwordRate=rating.rating;
+	
+	//get rating comment
+	var ratingComment=rating.comment
+
+	// get all details for the rating with all meaningful comments
+	var allRatingDetails=getLastRatingDetails(); 
+
 
 The provided rating policy is password length first (by a factor of 4),then (variety/charsets/sequences/keymaps)being equals.
 
@@ -195,6 +246,20 @@ Unit tests are provided, most non-randomized functions are tested using unit tes
 Unit tests depend on QUnit javascript framework.
 Simply open __[test/passgentests.html](test/passgentests.html)__ file to see results
  
+
+## Pre-defined character sets
+
+Available charsets are the following: 
+
+	alphaLower='abcdefghijklmnopqrstuvwxyz';
+	alphaUpper='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	numeric='0123456789';
+	punctuation='.,/;\':?"!#@~<>=+-_)(*&%';
+	special=' `|^$£€[]{}';
+	accented='àáâãäçèéêëìíîïðñòóôõöùúûüýÿ';
+	accentedUppercase='ÂÃÄÀÁÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜÝ';
+	accentedSpecial='ÅÆÐÑØÞßåæøþ¬¦';	
+
 
 
 ## TODO list / missing features

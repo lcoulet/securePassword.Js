@@ -76,6 +76,13 @@ loadDictionary(englishdict,"english");
 
 // Now globals section is finished it's a tiny bit better... Javascript ninja may be able to keep their eyes open now
 // ------------------------------------------------------------------------
+/**
+ * Retrieve all details from latest password rating
+ * @type {object} The password rating details object
+ */
+function getLastRatingDetails(){
+	return ratings;
+}
 
 /**
  * Unloads a dictionary in the dictionaries set
@@ -85,6 +92,21 @@ loadDictionary(englishdict,"english");
 function unloadDictionary( name ){
 	delete dict[name];
 	delete dictKeys[name];
+}
+
+/**
+ * Selects the type of  password generator
+ * @type {boolean} Enables generator for password easier to remember if true, or all random is false
+ */
+function setEasyPasswordRequested( trueOrFalse ){
+	easyPasswordRequested=trueOrFalse;
+}
+/**
+ * Selects the type of easy password generator for
+ * @type {boolean} Enables dictionaries if true, or disables them
+ */
+function useDictionaryForEasyPasswordRequested( trueOrFalse ){
+	easyPasswordUsingDictionary=trueOrFalse;
 }
 
 /**
