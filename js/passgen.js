@@ -381,7 +381,6 @@ function pickADictionary(  ){
  * @type {string} the selected word
  */
 function pickAWordFromDictionary( dictionaryName ){	
-	console.log(" Dict " + dictionaryName + " length " + dictKeys[dictionaryName].length );
 	return dictKeys[dictionaryName][ dictKeys[dictionaryName].length * Math.random() << 0 ];
 	
 }
