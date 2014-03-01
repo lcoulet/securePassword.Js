@@ -108,6 +108,18 @@ var translations = {
 			, rateGood: "Good"
 			, rateSecure: "Secure"
 			, rateHazardous: "Hazardous"
+			, rs_wts: "Password is far too short: "
+			, rs_ts: "Password is too short: "
+			, rs_q: "Password length is questionable: "
+			, rs_g: "Password length is pretty good: "
+			, rs_a: "Password length is awesome... Is is easy to remember?: "
+			, rs_i: "Password length is insane!!: "
+			, rseq_perfect: "Perfect: No (or very few) sequences found"
+			, rseq_average: "Average amount of sequences found: "
+			, rseq_impactive: "Impactive amount of sequences found: "
+			, rseq_impactive: "Impactive amount of sequences found: "
+			, rseq_toomany: "Too many / long sequences found: "
+			, rseq_allsequences: "Your password is all sequences: "
        }
 , fr:  { test_str: "test(fr)"
 			, passwordSize:   "Longueur de mot de passe"
@@ -809,12 +821,12 @@ function ratePasswordSize( password ){
 	var len = password.length;
 	
 	// lower than 5 is far too low	
-	if ( len < 5 ) return {rating:0.0, comment: "Password is far too short: "+len};		
-	if ( len < 8 ) return {rating:0.03*len, comment: "Password is too short: "+len};		
-	if ( len < 15 ) return {rating:.4+.05*(len-7), comment: "Password length is questionable: "+len};
-	if ( len < 30 ) return {rating:.8+.01*(len-15), comment: "Password length is pretty good: "+len};	
-	if ( len < 50 ) return {rating:.99+.0005*(len-30), comment: "Password length is awesome... Is is easy to remember?: "+len};
-	return {rating:1.0, comment: "Password length is insane!!: "+len};	
+	if ( len < 5 ) return {rating:0.0, comment: gettext("rs_wts")+len};		
+	if ( len < 8 ) return {rating:0.03*len, comment: gettext("rs_ts")+len};		
+	if ( len < 15 ) return {rating:.4+.05*(len-7), comment: gettext("rs_q")+len};
+	if ( len < 30 ) return {rating:.8+.01*(len-15), comment: gettext("rs_g")+len};	
+	if ( len < 50 ) return {rating:.99+.0005*(len-30), comment: gettext("rs_a")+len};
+	return {rating:1.0, comment: gettext("rs_i")+len};	
 	
 	
 }
@@ -836,13 +848,12 @@ function rateSequences( password ){
 	},"");		
 	var ratio=seqLength/password.length;
 	
-	if( ratio <= .1) return {rating:1.0, comment: "Perfect: No (or very few) sequences found"};
-	if( ratio <= .5) return {rating:.9-ratio/2, comment: "Average amount of sequences found: " + seqStr};
-	if( ratio <= .6) return {rating:.64-(ratio-.5), comment: "Impactive amount of sequences found: " + seqStr};
-	if( ratio <= .8) return {rating:.53-((ratio-.6)*2.0), comment: "Too many / long sequences found: " + seqStr};
-	if ( ratio == 1.0 ) return {rating:0.0, comment: "Your password is all sequences: " + seqStr} ;
-	return {rating:0.1, comment: "Too many / long sequences found: " + seqStr};
-	
+	if( ratio <= .1) return {rating:1.0, comment: gettext("rseq_perfect")};
+	if( ratio <= .5) return {rating:.9-ratio/2, comment: gettext("rseq_average") + seqStr};
+	if( ratio <= .6) return {rating:.64-(ratio-.5), comment: gettext("rseq_impactive") + seqStr};
+	if( ratio <= .8) return {rating:.53-((ratio-.6)*2.0), comment: gettext("rseq_toomany") + seqStr};
+	if ( ratio == 1.0 ) return {rating:0.0, comment: gettext("rseq_allsequences") + seqStr} ;
+	return {rating:0.1, comment: gettext("rseq_toomany") + seqStr};
 	
 }
 
