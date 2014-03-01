@@ -123,3 +123,12 @@ test( "rateDictionary : should rate one word badly", function() {
 test( "rateDictionary : should rate not only one word ", function() {
 	QUnit.close( rateDictionary("vieuxmachin",loadDictionary(minifrenchdict, "french")).rating, 0.40, .01 , "rateDictionary Test: should rate not only one word" );
 });
+
+test( "gettext Test: should find starting matching word", function() {
+	setLanguage("default");
+	deepEqual( gettext("test_str"), "test(en)" , "gettext Test: should find test string" );
+});
+test( "gettext Test: should find French starting matching word", function() {
+	setLanguage("fr");
+	deepEqual( gettext("test_str"), "test(fr)" , "gettext Test: should find French test string" );
+});

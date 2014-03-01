@@ -74,6 +74,97 @@ var frenchdict="les des une que est pour qui dans par plus pas sur sont Les avec
 loadDictionary(frenchdict,"french");
 loadDictionary(englishdict,"english");
 
+
+var translations = {
+  en:  { test_str: "test(en)"
+			, passwordSize: "password size"
+			, charsets: "character types"
+			, alphaLower: "alphabet lowercase"
+			, alphaUpper: "alphabet uppercase"
+			, numeric: "numeric"
+			, punctuation: "punctuation"
+			, special: "special"
+			, accented: "accented"
+			, accentedUppercase: "accentedUppercase"
+			, accentedSpecial: "accentedSpecial"			
+			, characterVariety: "character variety"
+			, sequences: "character sequences"
+			, keyboard: "character keyboard sequences"
+			, dictionary: "dictionary"
+			, globalRatingComment: "Aggregate from all individual ratings (size is first criteria)"
+			, rd_allwords_l: " (all words: "
+			, rd_allwords_r: ")"
+			, rd_allwords_hazard: "Hazardous, found word in "
+			, rd_allwords_weak: "Weak, found word in "
+			, rd_allwords_dic: " dictionary: "
+			, rd_allwords_q: "Questionable, found word in "
+			, rd_allwords_a: "Average, found word in "
+			, rd_allwords_g: "Good, found word in "
+			, rd_allwords_e1: "Excellent, even if found word in "
+			, rd_allwords_e2: "Excellent, no significant word found from dictionary compared to password size"
+			, rateUnsafe: "Unsafe"
+			, rateWeak: "Weak"
+			, rateMedium: "Medium"
+			, rateGood: "Good"
+			, rateSecure: "Secure"
+			, rateHazardous: "Hazardous"
+       }
+, fr:  { test_str: "test(fr)"
+			, passwordSize:   "Longueur de mot de passe"
+			, charsets:   "Types de caractères"
+			, alphaLower:   "alphabet minuscule"
+			, alphaUpper:   "alphabet majuscule"
+			, numeric:   "numérique"
+			, punctuation:   "ponctuation"
+			, special:   "caractères spéciaux"
+			, accented:   "caractères accentués"
+			, accentedUppercase:   "caractères accentués majuscule"
+			, accentedSpecial:   "caractères accentués/spéciaux"			
+			, characterVariety:   "variété"
+			, sequences:   "séquences"
+			, keyboard:   "séquences clavier"
+			, dictionary:   "dictionnaire"
+			, globalRatingComment:   "Aggrégation des critères individuels (la taille compte plus)"
+			, rd_allwords_l:   " (tous les mots: "
+			, rd_allwords_r:    ")"
+			, rd_allwords_hazard:    "Dangereux, mot trouvé "
+			, rd_allwords_weak:    "Faible, mot trouvé "
+			, rd_allwords_dic:    " dictionnaire: "
+			, rd_allwords_q:    "Médiocre, mot trouvé "
+			, rd_allwords_a:    "Moyen, mot trouvé "
+			, rd_allwords_g:    "Bon, mot trouvé "
+			, rd_allwords_e1:    "Excellent, malgré mot trouvé "
+			, rd_allwords_e2:    "Excellent, pas ou peu de mots du dictionnaire comparé à la taille du mot de passe "
+       }
+};
+
+var defaultText=translations.en;
+var selectedLanguage=defaultText;
+
+/**
+ * Translation function
+ * @param {key} the localized string key
+ * @type {string} the localized string
+ */
+function gettext( key )
+{
+  return selectedLanguage[ key ] || defaultText[ key ] || "{translation key not found: " + key + "}";
+}
+
+/**
+ * Set language to the selected key (e.g. fr, en), or to default
+ * @param {lang} the Language key
+ */
+function setLanguage( lang )
+{
+  if ( typeof translations[lang] !== 'undefined') {
+	selectedLanguage=translations[lang];
+  }else{
+	selectedLanguage=defaultText;
+  }
+}
+
+
 // Now globals section is finished it's a tiny bit better... Javascript ninja may be able to keep their eyes open now
 // ------------------------------------------------------------------------
 /**
@@ -658,7 +749,7 @@ function ratePassword( password ){
 	var globalRating=Math.pow(productOfRatings, 1.0/nbRatings);
 	return {
 			rating: globalRating,
-			comment: "Aggregate from all individual ratings (size is first criteria)"
+			comment: gettext("globalRatingComment")
 		}
 }
 
@@ -690,22 +781,21 @@ function rateDictionary(password, dictionary){
 	
 	var ratingFactor=maxWord.word.length/password.length;
 	
-	var allwords=" (all words: ";
+	var allwords=gettext("rd_allwords_l");
 	for (var i = 0; i < foundWords.length; i++)
 	{
-		console .log( "Biggest word found: " + maxWord.word );
 		allwords=allwords+"/"+foundWords[i].word;
 	}
-	var allwords=allwords+")";
+	var allwords=allwords+gettext("rd_allwords_r");
 	
 	// compare size of biggest word found with the password size
-	if( ratingFactor > .9 ) return {rating:0.01, comment: "Hazardous, found word in " + maxWord.dictionary + " dictionary: " + maxWord.word + allwords};	
-	if( ratingFactor > .8 ) return {rating:0.1, comment: "Weak, found word in " + maxWord.dictionary + " dictionary: " + maxWord.word + allwords};	
-	if( ratingFactor  > .7 ) return {rating:0.25, comment: "Questionable, found word in " + maxWord.dictionary + " dictionary: " + maxWord.word + allwords};	
-	if( ratingFactor  > .4 ) return {rating:0.25+.7-ratingFactor, comment: "Average, found word in " + maxWord.dictionary + " dictionary: " + maxWord.word + allwords};	
-	if( ratingFactor  > .2 ) return {rating:0.8, comment: "Good, found word in " + maxWord.dictionary + " dictionary: " + maxWord.word + allwords};	
-	if( ratingFactor  > .1 ) return  {rating:1.0, comment: "Excellent, even if found word in " + maxWord.dictionary + " dictionary: " + maxWord.word + allwords};	
-	return {rating:1.0, comment: "Excellent, so significant word found from dictionary compared to password size"};	
+	if( ratingFactor > .9 ) return {rating:0.01, comment: gettext("rd_allwords_hazard") + maxWord.dictionary + gettext("rd_allwords_dic") + maxWord.word + allwords};	
+	if( ratingFactor > .8 ) return {rating:0.1, comment: gettext("rd_allwords_weak") + maxWord.dictionary + gettext("rd_allwords_dic")  + maxWord.word + allwords};	
+	if( ratingFactor  > .7 ) return {rating:0.25, comment: gettext("rd_allwords_q") + maxWord.dictionary + gettext("rd_allwords_dic")  + maxWord.word + allwords};	
+	if( ratingFactor  > .4 ) return {rating:0.25+.7-ratingFactor, comment: gettext("rd_allwords_a") + maxWord.dictionary + gettext("rd_allwords_dic")  + maxWord.word + allwords};	
+	if( ratingFactor  > .2 ) return {rating:0.8, comment: gettext("rd_allwords_g") + maxWord.dictionary + gettext("rd_allwords_dic")  + maxWord.word + allwords};	
+	if( ratingFactor  > .1 ) return  {rating:1.0, comment: gettext("rd_allwords_e1") + maxWord.dictionary + gettext("rd_allwords_dic")  + maxWord.word + allwords};	
+	return {rating:1.0, comment: gettext("rd_allwords_e2")};	
 	    	
 }
 
@@ -1040,11 +1130,12 @@ function findSequences( password ){
  * @type {string} The resulting description
  */
 function passwordStrengthDescFromRate(rate){
-	if( rate < .5) return "Unsafe";
-	if( rate < .6) return "Weak";
-	if( rate < .7) return "Medium";
-	if( rate < .8) return "Good";
-	if( rate >= .8) return "Secure";
+	if( rate < .2) return gettext("rateHazardous");
+	if( rate < .5) return gettext("rateUnsafe");
+	if( rate < .6) return gettext("rateWeak");
+	if( rate < .7) return gettext("rateMedium");
+	if( rate < .8) return gettext("rateGood");
+	if( rate >= .8) return gettext("rateSecure");
 	return "N/A";
 }
 

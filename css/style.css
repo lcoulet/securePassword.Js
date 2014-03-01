@@ -91,7 +91,10 @@ input{
 #passwordRate{
 	font-size:3em;	
 }
-
+.Hazardous{
+	color:Yellow;
+	background-color: Red;	
+}
 .Unsafe{
 	color:White;
 	background-color: Red;	

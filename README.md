@@ -132,10 +132,14 @@ The provided rating policy is password length first (by a factor of 4),then (var
 The rating is entirely subjective, inspired from many password security rules found here and there over the internet.
 
 * **variety**: the number of different characters compared to the length of the password
-* **charsets**: the number of character sets used (e.g. alphabetical uppercase, lowercase, numbers, ...etc.)
+* **charsets**: the number of character sets/types used (e.g. alphabetical uppercase, lowercase, numbers, ...etc.)
 * **sequences**: the cumulated length of sequences of characters compared to the length of the password (e.g. 123456, abcdef...etc.)
-* **keymaps**: The sequences matchning a keyboard keymap compared to the length of the password (e.g. qwertyuiop, asdfgh ...etc.)     
-* **dictionary**: The length of the longest dictionary word recognized compared to password length.
+* **keymaps**: The sequences matchning a keyboard keymap compared to the length of the password (e.g. qwertyuiop (en), azerty(french), asdfgh ...etc.)     
+* **dictionary**: The length of the longest recognized dictionary word, compared to password length.
+
+With every rating detailed text is provided explaining the strength and found issues (e.g. sequences, words matched from dictionary).
+
+All ratings are provided as a number between 0 and 1.
 
 ## Dictionaries
 
@@ -160,18 +164,25 @@ Unload all dictionaries
 
 If you fork this project you may choose to remove the dictionaries in order to reduce size of the javascript or replaced by more adapted one(s).
 
+## Internationalization
+
+Default language is English. Support of translation with embedded translation to French is WIP.
+
+Choose the language:
+	
+	// Set language to French
+	setLanguage("fr");
+
+
 
 ## Dependencies
 
-Password generation and rating have no dependencies yet, they should have only one dependency when internationalization will be implemented: 
-* **i18next.js** (for internationalizationm but not implemented) 
-
+Password generation and rating have no dependencies (yet).
 
 UI has very few dependencies:
 * **JQuery**
 * **JQuery-UI** 
 * **gauge.coffee** (for the rating gauge)
-* **i18next.js** (for internationalizationm but not implemented)
 
 
 
