@@ -37,7 +37,7 @@ Example in HTML:
 	</head>
 	<body>
 		<script>
-           document.write("Password: " + makePassword(10));
+           document.write("Password: " + makePasswordWithSize(10));
 		</script>
 	</body> 
 
@@ -93,6 +93,7 @@ Optionally it can avoid character repetition.
 * "Easier to remember" password  generator 
 
 This generator generate patterns in the form of randomized (Text|Separator|Number)+ pattern.  
+
 Generated password is easier to remember for a human being, but has less entropy so may be considered weaker.
 
 * "Easier to remember" password  generator using dictionaries 
@@ -106,7 +107,7 @@ Generated password is easier to remember for a human being, but has less entropy
 
 
 
-## Meter
+## Meter / Password security test
 
 Password rating is defined within a rating policy object that is not yet fully implented and configurable.
 
