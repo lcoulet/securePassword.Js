@@ -42,12 +42,12 @@
 		
 		<script>
 		$( document ).ready(function() {
-			buildCharsetsForm("#charsetsSelector");
-		   buildOptionsForm("#optionsSelector");
-		   buildRatingElements("#ratingDetails");
-		   buildGenerateButton("#generateButton");
-		   buildGaugeElement("gauge");
-		   buildTestButton("#testButton");
+		   new SecurePasswordUI().buildCharsetsForm("#charsetsSelector").
+			   buildOptionsForm("#optionsSelector").
+			   buildRatingElements("#ratingDetails").
+			   buildGenerateButton("#generateButton").
+			   buildGaugeElement("gauge").
+			   buildTestButton("#testButton");
 		});
 		               
 		</script>

@@ -37,7 +37,7 @@ Example in HTML:
 	</head>
 	<body>
 		<script>
-           document.write("Password: " + makePasswordWithSize(10));
+           document.write("Password: " + new SecurePassword().makePasswordWithSize(10));
 		</script>
 	</body> 
 
@@ -51,33 +51,34 @@ Generate a password (one line):
 
 	
 	// Generate a 20 characters password
-	var password=makePasswordWithSize(20);
+	var password=new SecurePassword().makePasswordWithSize(20);
 
 
 Model selection:
 
 	
+	var spt = new SecurePassword();
 	// all random characters password
-	setEasyPasswordRequested(false);		
+	spt.setEasyPasswordRequested(false);		
 
 	// OR password with patterns making it easier to remember	
-	setEasyPasswordRequested(true);			
+	spt.setEasyPasswordRequested(true);			
 	
 	
 	// only applies if easyPasswordRequested is true, use real words in patterns
-	useDictionaryForEasyPasswordRequested(true);	
+	spt.useDictionaryForEasyPasswordRequested(true);	
 
 Charsets selection:
 
 	// Enable default charsets (not necessary, done automatically)
-	enableDefaultCharsets();
+	spt.enableDefaultCharsets();
 	
 	// OR enable all available charsets
-	enableAllCharsets();
+	spt.enableAllCharsets();
 
 	// OR enable only required charsets
-	disableCharset("alphaLower");
-	enableCharset("accented");
+	spt.disableCharsetByName("alphaLower");
+	spt.enableCharsetByname("accented");
 
 
 
@@ -116,7 +117,7 @@ Rating is composed of criteria that return a note and a comment, an aggregate is
 Rate a password:
 	
 	// rate the password 
-	var rating=ratePassword("myPasswordToBeAnalyzed");
+	var rating=spt.ratePassword("myPasswordToBeAnalyzed");
 	
 	// get rating value
 	var passwordRate=rating.rating;
@@ -125,7 +126,7 @@ Rate a password:
 	var ratingComment=rating.comment
 
 	// get all details for the rating with all meaningful comments
-	var allRatingDetails=getLastRatingDetails(); 
+	var allRatingDetails=spt.getLastRatingDetails(); 
 
 
 The provided rating policy is password length first (by a factor of 4),then (variety/charsets/sequences/keymaps)being equals.
@@ -151,16 +152,16 @@ One or several dictionaries can be loaded at the same time, and they can be cust
 Load a space-separated set of words:
 	
 	var dictwords="this is a test"; // can be loaded from text or ajax request
-	loadDictionary( dictwords, "test" );
+	spt.loadDictionary( dictwords, "test" );
 
 
 Unload a dictionary
 
-	unloadDictionary( "test" );
+	spt.unloadDictionary( "test" );
 
 Unload all dictionaries
 
-	unloadDictionaries();
+	spt.unloadDictionaries();
 
 
 If you fork this project you may choose to remove the dictionaries in order to reduce size of the javascript or replaced by more adapted one(s).
@@ -172,7 +173,7 @@ Default language is English. Support of translation with embedded translation to
 Choose the language:
 	
 	// Set language to French
-	setLanguage("fr");
+	spt.setLanguage("fr");
 
 
 
@@ -240,12 +241,12 @@ Example:
 		
 		<script>
 		$( document ).ready(function() {
-		   buildCharsetsForm("#charsetsSelector");
-		   buildOptionsForm("#optionsSelector");
-		   buildRatingElements("#ratingDetails");
-		   buildGenerateButton("#generateButton");
-		   buildGaugeElement("gauge");
-		   buildTestButton("#testButton");
+		    new SecurePasswordUI().buildCharsetsForm("#charsetsSelector").
+			   buildOptionsForm("#optionsSelector").
+			   buildRatingElements("#ratingDetails").
+			   buildGenerateButton("#generateButton").
+			   buildGaugeElement("gauge").
+			   buildTestButton("#testButton");
 		});         
 		</script>
 		
@@ -281,6 +282,6 @@ Available charsets are the following:
 * Allow custom charset
 * Make sure that there's no duplicates characters with selected charsets when using a custom charset
 * Remove dependency to hardcoded element IDs
-* Improve Javascript : Better structure, lower repetition, use parametereized objects instead of global variables
+* Improve Javascript : Better structure, lower repetition
 * Implement dictionary lookup as bloom filter?  
 * Add support for other rating policies
