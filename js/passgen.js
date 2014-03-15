@@ -48,6 +48,7 @@ function SecurePassword() {
 	ratings["sequences"]=0;
 	ratings["keyboard"]=0;
 	ratings["dictionary"]=0;
+	ratings["commonPasswords"]=0;
 
 	var coefficients={};
 	coefficients["passwordSize"]=4;
@@ -61,6 +62,9 @@ function SecurePassword() {
 	// The dictionary lookup object
 	var dict = {};
 	var dictKeys = {};
+	// The password dictionary lookup object
+	var passwddict = {};
+	var passwddictKeys = {};
 
 	// LZ-String LZW encoder/decoder is embedded, WTFPL allows this
 	// source : http://pieroxy.net/blog/pages/lz-string/index.html
@@ -211,6 +215,7 @@ function SecurePassword() {
 			return this;
 		}
 
+
 		/**
 		 * Selects the type of  password generator
 		 * @type {boolean} Enables generator for password easier to remember if true, or all random is false
@@ -257,6 +262,28 @@ function SecurePassword() {
 			}
 			
 			dictKeys[ name ] = Object.keys(dict[ name ]);
+			return dict;
+		}
+
+
+		/**
+		 * Loads a password dictionary in the relevant dictionaries set
+		 * @param {string} dictionary The string to look into
+		 * @param {string} name The name of the added words list
+		 * @type {object} The new dictionaries set
+		 */
+		this.loadPasswdDictionary = function ( dictionary, name ){
+			passwddict[ name ]={};
+			// Get an array of all the words
+			var words = dictionary.split( " " );
+		 
+			// And add them as properties to the dictionary lookup
+			// This will allow for fast lookups later
+			for ( var i = 0; i < words.length; i++ ) {
+				passwddict[ name ][ words[i] ] = true;		
+			}
+			
+			passwddictKeys[ name ] = Object.keys(passwddict[ name ]);
 			return dict;
 		}
 
@@ -799,6 +826,7 @@ function SecurePassword() {
 			ratings["sequences"]=rateSequences(password);
 			ratings["keyboard"]=rateKeyboardLayout(password);
 			ratings["dictionary"]=rateDictionary(password, dict);
+			ratings["commonPasswords"]=rateDictionary(password, passwddict);
 			
 			coefficients["passwordSize"]=4;
 			coefficients["charsets"]=1;
@@ -806,6 +834,7 @@ function SecurePassword() {
 			coefficients["sequences"]=1;
 			coefficients["keyboard"]=1;
 			coefficients["dictionary"]=1;
+			coefficients["commonPasswords"]=1;
 			
 			var nbRatings=0;
 			var sumOfRatings=0;
@@ -845,7 +874,7 @@ function SecurePassword() {
 				curLetters=Array.prototype.slice.call(curLetters);
 				baseword = curLetters.join("");
 						
-				foundword=findWord(baseword,dict);		
+				foundword=findWord(baseword,dictionary);		
 				if( foundword.word != "" ){
 					foundWords.push(foundword);
 					if( foundword.word.length > maxWord.word.length){
@@ -1274,6 +1303,7 @@ function SecurePassword() {
 			this.enableDefaultCharsets();
 			this.loadDictionary(frenchdict,"french");
 			this.loadDictionary(englishdict,"english");
+			this.loadPasswdDictionary(worstPassswordsdict,"10k worst passwords");
 			return this;
 		}
 		
