@@ -138,6 +138,7 @@ The rating is entirely subjective, inspired from many password security rules fo
 * **sequences**: the cumulated length of sequences of characters compared to the length of the password (e.g. 123456, abcdef...etc.)
 * **keymaps**: The sequences matchning a keyboard keymap compared to the length of the password (e.g. qwertyuiop (en), azerty(french), asdfgh ...etc.)     
 * **dictionary**: The length of the longest recognized dictionary word, compared to password length.
+* **common passwords**: The length of the longest recognized word in the 10K worst passwords, compared to evaluated password length.
 
 With every rating detailed text is provided explaining the strength and found issues (e.g. sequences, words matched from dictionary).
 
@@ -145,7 +146,8 @@ All ratings are provided as a number between 0 and 1.
 
 ## Dictionaries
 
-For size reason only a few hundred common words are provided and pre-loaded (French and English). The included dictionaries include  the 6,000 most used words longer than 2 characters for each language, list built according to [Wiktionary Frequency lists](http://en.wiktionary.org/wiki/Wiktionary%3aFrequency_lists) 
+For size reason only a few thousands common words are provided and pre-loaded (French and English). The included dictionaries include  the 6,000 most used words longer than 2 characters for each language, list built according to [Wiktionary Frequency lists](http://en.wiktionary.org/wiki/Wiktionary%3aFrequency_lists) 
+To gain space English words list is compressed and inlined in base64... Unfortunately French special chars did not uncompress correctly, so French is not compressed yet.
 
 One or several dictionaries can be loaded at the same time, and they can be customized or enriched.   
 
@@ -165,6 +167,31 @@ Unload all dictionaries
 
 
 If you fork this project you may choose to remove the dictionaries in order to reduce size of the javascript or replaced by more adapted one(s).
+
+
+## Common (/worst) passwords lists 
+
+The 10,000 most common passwords are already included as "10k worst passwords". To gain space passwords list is compressed and inlined in base64... 
+
+One or several passwords lists can be loaded at the same time, and they can be customized or enriched.   
+
+Load a space-separated set of words:
+	
+	var commonPasswords="this is a test"; // can be loaded from text or ajax request
+	spt.loadPasswdDictionary( dictwords, "test" );
+
+
+Unload a dictionary
+
+	spt.unloadPasswdDictionary( "test" );
+
+Unload all dictionaries
+
+	spt.unloadAllPasswdDictionaries();
+
+
+If you fork this project you may choose to remove the dictionaries in order to reduce size of the javascript or replaced by more adapted one(s).
+
 
 ## Internationalization
 

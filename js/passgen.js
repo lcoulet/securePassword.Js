@@ -284,8 +284,30 @@ function SecurePassword() {
 			}
 			
 			passwddictKeys[ name ] = Object.keys(passwddict[ name ]);
-			return dict;
+			return passwddict;
 		}
+		
+		/**
+		 * Unloads a password dictionary in the dictionaries set
+		 * @param {string} name The name of the removed words list
+		 * @type {object} The new dictionaries set
+		 */
+		this.unloadPasswdDictionary = function ( name ){
+			delete passwddict[name];
+			delete passwddictKeys[name];
+			return this;
+		}
+		
+		/**
+		 * Unloads any password dictionary in the dictionaries set
+		 * @type {object} The new dictionaries set
+		 */
+		this.unloadAllPasswdDictionaries = function (  ){
+			passwddict = {};
+			passwddictKeys={};
+			return passwddict;
+		}
+
 
 		this._findWord = function ( letters, dict ) {
 			return findWord( letters, dict );
