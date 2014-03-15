@@ -118,12 +118,12 @@ test( "rateDictionary : should rate no word", function() {
 });
 
 test( "rateDictionary : should rate one word badly", function() {
-	QUnit.close( spt._rateDictionary("vieux",spt.loadDictionary(minifrenchdict, "french")).rating, 0.01, .00001 , "rateDictionary Test: should rate one word badly" );
+	QUnit.close( spt._rateDictionary("vieux",spt.loadDictionary(minifrenchdict, "french")).rating, 0.00, .00001 , "rateDictionary Test: should rate one word badly" );
 });
 
 
 test( "rateDictionary : should rate not only one word ", function() {
-	QUnit.close( spt._rateDictionary("vieuxmachin",spt.loadDictionary(minifrenchdict, "french")).rating, 0.40, .01 , "rateDictionary Test: should rate not only one word" );
+	QUnit.close( spt._rateDictionary("vieuxmachin",spt.loadDictionary(minifrenchdict, "french")).rating, 0.46, .01 , "rateDictionary Test: should rate not only one word" );
 });
 
 test( "gettext Test: should find starting matching word", function() {
