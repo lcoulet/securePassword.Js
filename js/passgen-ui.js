@@ -65,6 +65,9 @@ function SecurePasswordUI() {
 						testPassword($("#generatedPassword").val());
 					}
 				);
+		$("#generatedPassword").keyup(function() {
+			testPassword($("#generatedPassword").val());
+		});
 		return this;
 	}
 	this.buildOptionsForm = function ( elementID ){	

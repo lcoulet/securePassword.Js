@@ -934,9 +934,9 @@ function SecurePassword() {
 			var len = password.length;
 			
 			// lower than 5 is far too low	
-			if ( len < 5 ) return {rating:0.0, comment: gettext("rs_wts")+len};		
-			if ( len < 8 ) return {rating:0.03*len, comment: gettext("rs_ts")+len};		
-			if ( len < 15 ) return {rating:.4+.05*(len-7), comment: gettext("rs_q")+len};
+			if ( len < 6 ) return {rating:0.0, comment: gettext("rs_wts")+len};		
+			if ( len < 10 ) return {rating:0.04*len, comment: gettext("rs_ts")+len};		
+			if ( len < 15 ) return {rating:.4+.05*(len-10), comment: gettext("rs_q")+len};
 			if ( len < 30 ) return {rating:.8+.01*(len-15), comment: gettext("rs_g")+len};	
 			if ( len < 50 ) return {rating:.99+.0005*(len-30), comment: gettext("rs_a")+len};
 			return {rating:1.0, comment: gettext("rs_i")+len};	
