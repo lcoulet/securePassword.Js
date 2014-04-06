@@ -25,3 +25,5 @@ SecurePasswordTool.loadPasswdDictionary(
 	,"10k worst passwords");
 
 
+$("#still_loading").text('');
+$("#still_loading").style.visibility='hidden';

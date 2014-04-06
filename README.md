@@ -313,5 +313,4 @@ Available charsets are the following:
 * Make sure that there's no duplicates characters with selected charsets when using a custom charset
 * Remove dependency to hardcoded element IDs
 * Improve Javascript : Better structure, lower repetition
-* Implement dictionary lookup as bloom filter?  
 * Add support for other rating policies

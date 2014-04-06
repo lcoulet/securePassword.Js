@@ -11,7 +11,8 @@ function SecurePasswordUI() {
 	
 	var passwordSize=15;
 	
-	this.buildCharsetsForm = function ( elementID ){	
+	this.buildCharsetsForm = function ( elementID ){
+		$(elementID).append('<span id="still_loading"><h2>Loading data...<h2><br /></span>');	
 		var availableCharsets=SecurePasswordTool.getAvailableCharsets();
 		for(var charsetName in availableCharsets ){
 			var htmlCharset=$('<div/>').text(availableCharsets[charsetName]).html();
@@ -181,11 +182,12 @@ function SecurePasswordUI() {
         s.async = true;
         s.src = 'js/dict.js';
         var x = document.getElementsByTagName('script')[0];
-        x.parentNode.insertBefore(s, x);
+        x.parentNode.insertBefore(s, x); 
     }
     if (window.attachEvent)
         window.attachEvent('onload', async_load);
     else
         window.addEventListener('load', async_load, false);
+	
 })();
 
