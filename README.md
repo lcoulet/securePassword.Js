@@ -14,6 +14,7 @@ There are three components:
 * Password generation engine: in js/passgen.js
 * Password rating engine: in js/passgen.js
 * UI engine: in js/passgen-ui.js
+* Big dictionary words lists: in js/dict.js
 
 
 Other directories:
@@ -146,8 +147,10 @@ All ratings are provided as a number between 0 and 1.
 
 ## Dictionaries
 
-For size reason only a few thousands common words are provided and pre-loaded (French and English). The included dictionaries include  the 6,000 most used words longer than 2 characters for each language, list built according to [Wiktionary Frequency lists](http://en.wiktionary.org/wiki/Wiktionary%3aFrequency_lists) 
+For size reason only a few thousands common words are provided and pre-loaded (French and English). The included dictionaries include  the 6,000 most used words longer than 2 characters for French language, and about 80,000 for English language. Lists are built according to [Wiktionary Frequency lists](http://en.wiktionary.org/wiki/Wiktionary%3aFrequency_lists) 
 To gain space English words list is compressed and inlined in base64... Unfortunately French special chars did not uncompress correctly, so French is not compressed yet.
+
+Full Dictionaries are loaded asynchronously by the dict.js javascriot file, which is in turn loaded by the UI script.
 
 One or several dictionaries can be loaded at the same time, and they can be customized or enriched.   
 
