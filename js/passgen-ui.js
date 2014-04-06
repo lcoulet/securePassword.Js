@@ -2,11 +2,13 @@
 // Javascript password generator UI based on JQuery
 // Author: L.Coulet, 2014
 // License: Apache 2.0
-function SecurePasswordUI() {  
 
+var SecurePasswordTool=new SecurePassword();
+
+function SecurePasswordUI() {  
 	var ratingDetails;
 	var gauge;
-	var SecurePasswordTool=new SecurePassword();
+	
 	var passwordSize=15;
 	
 	this.buildCharsetsForm = function ( elementID ){	
@@ -171,3 +173,19 @@ function SecurePasswordUI() {
 		return this;
 	}
 }
+
+(function() {
+    function async_load(){
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'js/dict.js';
+        var x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+    }
+    if (window.attachEvent)
+        window.attachEvent('onload', async_load);
+    else
+        window.addEventListener('load', async_load, false);
+})();
+
