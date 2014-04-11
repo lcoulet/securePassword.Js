@@ -367,7 +367,7 @@ function SecurePassword() {
 				
 				
 				//  check if allowed charset contains numbers before adding any
-				if( allowedCharset.indexOf(classifiedCharsets["numeric"]) != -1 )
+				if( allowedCharset.indexOf(classifiedCharsets["numeric"]) !== -1 )
 					passwordAddon=easierToRememberPasswordNumber(allowedCharset, addonLength );
 				lastItem="number";
 			} else{
@@ -417,7 +417,7 @@ function SecurePassword() {
 				
 				
 				//  check if allowed charset contains numbers before adding any
-				if( allowedCharset.indexOf(classifiedCharsets["numeric"]) != -1 )
+				if( allowedCharset.indexOf(classifiedCharsets["numeric"]) !== -1 )
 					passwordAddon=easierToRememberPasswordNumber(allowedCharset, addonLength );
 				lastItem="number";
 			} else{
@@ -585,7 +585,7 @@ function SecurePassword() {
 			
 			var maxLength=length-currentWord.length;
 			
-			if( type == 3 && currentWord.length > 0){
+			if( type === 3 && currentWord.length > 0){
 				type=1;
 			}
 			
@@ -594,7 +594,7 @@ function SecurePassword() {
 			// take vowel or consonant depending on last type and append
 			var takeFrom=classifiedCharsets["consonant"];	
 			var newLastTaken=1;
-			if (lastTaken == 1 ){
+			if (lastTaken === 1 ){
 				takeFrom=classifiedCharsets["vowel"];
 				newLastTaken=2;
 			}
@@ -602,9 +602,9 @@ function SecurePassword() {
 			// Upercase or lowercase ?
 			// 3 choices : 3-one uppercase + lowercase / 2-all lowercase / 1-all uppercase	
 			var reducedCharset;
-			if ( type == 1 ){
+			if ( type === 1 ){
 				reducedCharset = commonCharset(takeFrom,classifiedCharsets["uppercase"]);			
-			}else if (type == 2 ){
+			}else if (type === 2 ){
 				reducedCharset = commonCharset(takeFrom,classifiedCharsets["lowercase"]);	
 			}else {
 				reducedCharset = commonCharset(takeFrom,classifiedCharsets["uppercase"]);
@@ -634,7 +634,7 @@ function SecurePassword() {
 			var currNumber="";
 			
 			// if size is 4, chances for a date 2000's, 1900's ...etc.
-			if ( length == 4 ){
+			if ( length === 4 ){
 				if( Math.random() > .7 ) currNumber="20";
 				else if( Math.random() > .7 ) currNumber="19";
 				else if( Math.random() > .8 ) currNumber="18";
@@ -658,7 +658,7 @@ function SecurePassword() {
 		 */
 		pickOneFromCharsetWithPreference = function (allowedCharacters, preferredCharacters){
 			var reducedCharset = commonCharset( allowedCharacters, preferredCharacters );
-			if( reducedCharset.length == 0 ){
+			if( reducedCharset.length === 0 ){
 				reducedCharset=allowedCharacters;
 			}
 			
@@ -694,7 +694,7 @@ function SecurePassword() {
 		 * @param {string} The characters of the custom charset
 		 */
 		this.setCustomCharset = function ( charset ){
-			if( charset.length==0 ){
+			if( charset.length===0 ){
 				delete availableCharsets["custom"];
 			}else{
 				availableCharsets["custom"]=charset;
@@ -791,7 +791,7 @@ function SecurePassword() {
 			// if length is lower than number of charsets there's no way to solve it
 			if (Object.keys(enabledCharsets).length > password.length) return password;
 			
-			while ( isCompliant == false ){
+			while ( isCompliant === false ){
 				isCompliant = true;
 				for(var charsetName in enabledCharsets){
 					var charset=enabledCharsets[charsetName];
@@ -889,7 +889,7 @@ function SecurePassword() {
 				baseword = curLetters.join("");
 						
 				foundword=findWord(baseword,dictionary);		
-				if( foundword.word != "" ){
+				if( foundword.word !== "" ){
 					foundWords.push(foundword);
 					if( foundword.word.length > maxWord.word.length){
 						maxWord=foundword;				
@@ -963,7 +963,7 @@ function SecurePassword() {
 			if( ratio <= .5) return {rating:.9-ratio/2, comment: gettext("rseq_average") + seqStr};
 			if( ratio <= .6) return {rating:.64-(ratio-.5), comment: gettext("rseq_impactive") + seqStr};
 			if( ratio <= .8) return {rating:.53-((ratio-.6)*2.0), comment: gettext("rseq_toomany") + seqStr};
-			if ( ratio == 1.0 ) return {rating:0.0, comment: gettext("rseq_allsequences") + seqStr} ;
+			if ( ratio === 1.0 ) return {rating:0.0, comment: gettext("rseq_allsequences") + seqStr} ;
 			return {rating:0.1, comment: gettext("rseq_toomany") + seqStr};
 			
 		}
@@ -979,7 +979,7 @@ function SecurePassword() {
 		 */
 		rateKeyboardLayout = function ( password ){
 			var keyboardSequences={};
-			if( !password || password.length==0 ){
+			if( !password || password.length===0 ){
 				return {rating: 0.0, comment: "no passwords"};
 			}
 			
@@ -1004,7 +1004,7 @@ function SecurePassword() {
 				//console.log( "password : " + commonality.length + " " + commonality.sequence + " keyboard: " + keyboardseqName );
 			}
 			
-			if ( worstsequence.length == 0) return {rating:1.0, comment: "Perfect : no keyboard sequence"} ;		
+			if ( worstsequence.length === 0) return {rating:1.0, comment: "Perfect : no keyboard sequence"} ;		
 			// Less than 3 characters is no problem	
 			if ( worstsequence.length < 3 && password.length > 8 ) return {rating:1.0, comment: "Perfect: No (or short enough) keyboard sequences found"};			
 			if ( worstsequence.length < 3  ) return {rating:1-worstsequence.length/10, comment: "Keyboard sequence: " + keyboardRecognized  + " layout, \"" + worstsequence.sequence+'"'};		
@@ -1114,11 +1114,11 @@ function SecurePassword() {
 			// less than 2 types of characters is not enough
 			if( charsetCount < 2 ) return {rating:0.05, comment: "Not enough types of characters types:" + charsetsStr};
 			// 2 types of characters is weak
-			if( charsetCount == 2 ) return {rating:.2, comment: "Not enough types of characters types:" + charsetsStr};
+			if( charsetCount === 2 ) return {rating:.2, comment: "Not enough types of characters types:" + charsetsStr};
 			// 3 types of characters is good enough
-			if( charsetCount == 3 ) return {rating:.65, comment: "Average amount of characters types:" + charsetsStr};
+			if( charsetCount === 3 ) return {rating:.65, comment: "Average amount of characters types:" + charsetsStr};
 			// More than 3 types of characters is pretty good
-			if( charsetCount == 4 ) return {rating:.9, comment: "Good amount of characters types:" + charsetsStr};	
+			if( charsetCount === 4 ) return {rating:.9, comment: "Good amount of characters types:" + charsetsStr};	
 			// More than 4 types of characters is perfect
 			return {rating:1.0, comment: "Perfect amount of characters types:" + charsetsStr};	
 			
@@ -1180,7 +1180,7 @@ function SecurePassword() {
 		hasOneFromCharset = function ( charset, password){
 			var hasFromCharset=false;
 			for (var i=0;i<password.length;i++) {    
-				if( charset.indexOf(password.charAt(i)) != -1 ) {
+				if( charset.indexOf(password.charAt(i)) !== -1 ) {
 					hasFromCharset=true;
 					break;
 				}
@@ -1222,14 +1222,14 @@ function SecurePassword() {
 				var isSequence=false;
 				
 				// if this is not the first character, check for ordered sequence
-				if( lastCode != -1 ) {
+				if( lastCode !== -1 ) {
 					// do we detect a sequence?
-					isSequence=(Math.abs( currCode - lastCode) == 1);
+					isSequence=(Math.abs( currCode - lastCode) === 1);
 					direction=currCode - lastCode;
 					
 					// check if sequential status detection status changed
-					if( isSequence != isInSequence){
-						if( isSequence == true ){
+					if( isSequence !== isInSequence){
+						if( isSequence === true ){
 							currSequence+=lastChar;
 							lastDirection=currCode - lastCode;
 						}else{
@@ -1240,7 +1240,7 @@ function SecurePassword() {
 					
 					if( isSequence ){
 						// check if direction changed, if yes there are 2 sequences
-						if( direction != lastDirection){
+						if( direction !== lastDirection){
 							sequences.push(currSequence);
 							currSequence=""+lastChar;
 						}
@@ -1256,7 +1256,7 @@ function SecurePassword() {
 				lastChar=password.charAt(i);
 				lastDirection=direction;
 			}
-			if( currSequence.length != 0 ){
+			if( currSequence.length !== 0 ){
 				sequences.push(currSequence);
 			}
 			
