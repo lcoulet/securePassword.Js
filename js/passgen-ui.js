@@ -122,7 +122,7 @@ function SecurePasswordUI() {
 			);
 		return this;
 	}
-	copyToClipboard = function (text) {
+	var copyToClipboard = function (text) {
 	  window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
 	}
 	this.buildRatingElements = function (elementID){	
@@ -134,9 +134,10 @@ function SecurePasswordUI() {
 			var elemIDv="r"+rating+"Val";
 			ratingDetails.append('<div id="'+elemIDc+'">'+$('<div/>').text(rating).html()+': <span id="'+elemIDr+'"></span><span id="'+elemIDv+'"></span></div><br />');
 		}
+		ratingDetails.append('<div id="passwdhashes"></div>');		
 		return this;
 	}
-	showRatings = function (){		
+	var showRatings = function (){		
 		var ratings=SecurePasswordTool.getLastRatingDetails();
 		for(var rating in ratings){
 			var oneRating=ratings[rating];
@@ -147,7 +148,7 @@ function SecurePasswordUI() {
 		}
 		return this;
 	}
-	generatePasswordInUI = function (){
+	var generatePasswordInUI = function (){
 		var spinnerVal=parseInt($('#spinner').val());
 		if( !isNaN(spinnerVal)  ){
 			passwordSize=spinnerVal;
@@ -158,20 +159,34 @@ function SecurePasswordUI() {
 		copyToClipboard(passwd);
 		return this;
 	}
-	testPassword = function (passwd){
+	var testPassword = function (passwd){
 		var rate=SecurePasswordTool.ratePassword(passwd);				
 		showRatingElement("#passwordRate","#passwordRateValue","#coloredRate",rate);
-		showRatings();
+		showRatings();		
 		if ( typeof gauge !== 'undefined'){
 			gauge.set(rate.rating*100);
 		}
+		showHashes(passwd);
 		return this;
 	}
-	showRatingElement = function ( passwordRateEID, passwordRateValueEID, coloredRateEID, evaluation){
+	var showRatingElement = function ( passwordRateEID, passwordRateValueEID, coloredRateEID, evaluation){
 		$(coloredRateEID).attr('class', SecurePasswordTool.passwordStrengthDescFromRate(evaluation.rating));
 		$(passwordRateEID).text(""+SecurePasswordTool.passwordStrengthDescFromRate(evaluation.rating)); 
 		$(passwordRateValueEID).text(" ("+(evaluation.rating*100).toFixed(2)+"%)" + " - " + evaluation.comment ); 				
 		return this;
+	}
+	
+	var showHashes = function(password){
+		var passHashes=SecurePasswordTool.makeHashFunctions(password);
+		
+		var outHtml=$("#passwdhashes");
+		outHtml.text("HASH CODES BELOW:");
+		outHtml.append("<br />");
+		for(var hashFunction in passHashes){		
+			outHtml.append($('<div/>').text(hashFunction).html()+": "+$('<div/>').text(passHashes[hashFunction]).html()+"<br />");			
+			console.log(outHtml);
+		}
+		
 	}
 }
 

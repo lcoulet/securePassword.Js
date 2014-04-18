@@ -58,6 +58,14 @@ function SecurePassword() {
 	coefficients["keyboard"]=1;
 	coefficients["dictionary"]=1;
 
+	// Supported hash functions
+	var hashFunctions = {
+		"MD5": function (password){return hex_md5(password);},
+		"RIPEMD-160": function (password){return  hex_rmd160(password);},
+		"SHA-1": function (password){return hex_sha1(password);},
+		"SHA-256": function (password){return hex_sha256(password);},
+		"SHA-512": function (password){return hex_sha512(password);}
+	};
 
 	// The dictionary lookup object
 	var dict = {};
@@ -169,7 +177,7 @@ function SecurePassword() {
 		 * @param {key} the localized string key
 		 * @type {string} the localized string
 		 */
-		gettext = function ( key )
+		var gettext = function ( key )
 		{
 		  return selectedLanguage[ key ] || defaultText[ key ] || "{translation key not found: " + key + "}";
 		}
@@ -311,7 +319,7 @@ function SecurePassword() {
 		 * @param {object} dict The dictionary set to use for lookup
 		 * @type {object} object containing the longest word and the name of matching dictionary
 		 */
-		findWord = function ( letters, dict ) {
+		var findWord = function ( letters, dict ) {
 			
 			// Clone the array for manipulation
 			var curLetters = letters.slice( 0 ), word = "";
@@ -347,7 +355,7 @@ function SecurePassword() {
 		 * @param {string} previous last type done ('cause this is recursive)
 		 * @type {string} the generated password
 		 */
-		easierToRememberPassword = function ( allowedCharset, length, password, previous ){	
+		var easierToRememberPassword = function ( allowedCharset, length, password, previous ){	
 			// if we're done return the generated password
 			if( password.length >= length) return password;
 			
@@ -397,7 +405,7 @@ function SecurePassword() {
 		 * @param {string} previous last type done ('cause this is recursive)
 		 * @type {string} the generated password
 		 */
-		easierToRememberPasswordUsingDictionaries = function ( allowedCharset, length, password, previous ){	
+		var easierToRememberPasswordUsingDictionaries = function ( allowedCharset, length, password, previous ){	
 			// if we're done return the generated password
 			if( password.length >= length) return password;
 			
@@ -446,7 +454,7 @@ function SecurePassword() {
 		 * @param {string} currentPassword the string that may be modified
 		 * @type {string} the modified string
 		 */
-		addSeparatorOrOpenCloseOrNothing = function ( allowedCharset, maxLength, currentPassword){
+		var addSeparatorOrOpenCloseOrNothing = function ( allowedCharset, maxLength, currentPassword){
 			var remainingLength=maxLength-currentPassword.length;
 			
 			if (  remainingLength  >= 2){		
@@ -476,7 +484,7 @@ function SecurePassword() {
 		 * @param {string} charset2 Another string
 		 * @type {string} the common set of characters as a string
 		 */
-		commonCharset = function ( charset1, charset2){
+		var commonCharset = function ( charset1, charset2){
 			var returnCharset="";
 			for ( var i = 0; i < charset1.length; i++ )
 			{
@@ -492,7 +500,7 @@ function SecurePassword() {
 		 * @param {string} addon The part to append to the existing string
 		 * @type {string} the generated word
 		 */
-		appendOrPrepend = function ( existing, addon){
+		var appendOrPrepend = function ( existing, addon){
 			if ( Math.random() > .5) return addon + existing;  
 			return existing+addon;
 		}
@@ -503,7 +511,7 @@ function SecurePassword() {
 		 * @param {number} length The maximal Length of characters
 		 * @type {string} the generated word
 		 */
-		easierToRememberPasswordWord = function ( allowedCharset, length ){
+		var easierToRememberPasswordWord = function ( allowedCharset, length ){
 			var type = Math.ceil(Math.random()*3);
 			
 			return easierToRememberPasswordWordRec( allowedCharset, "", length, type, Math.ceil(Math.random()*2) );
@@ -517,7 +525,7 @@ function SecurePassword() {
 		 * @param {number} length The maximal Length of the word
 		 * @type {string} the generated word
 		 */
-		easierToRememberPasswordWordFromDictionary = function ( allowedCharset, length ){		
+		var easierToRememberPasswordWordFromDictionary = function ( allowedCharset, length ){		
 			var dictWord="";
 			if( length > 3) {
 				var i=0;
@@ -547,7 +555,7 @@ function SecurePassword() {
 		 * @type {string} string the string to modify
 		 * @type {string} the modified string
 		 */
-		capitaliseFirstLetter = function (string){
+		var capitaliseFirstLetter = function (string){
 			return string.charAt(0).toUpperCase() + string.slice(1);
 		}
 
@@ -555,7 +563,7 @@ function SecurePassword() {
 		 * Returns a name of a loaded  dictionnary (randomly)
 		 * @type {string} the dictionary name
 		 */
-		pickADictionary = function (  ){	
+		var pickADictionary = function (  ){	
 			var dictNames = Object.keys(dict);
 			return dictNames[ dictNames.length * Math.random() << 0 ];
 			
@@ -566,7 +574,7 @@ function SecurePassword() {
 		 * @param {string} dictionaryName the dictionary name
 		 * @type {string} the selected word
 		 */
-		pickAWordFromDictionary = function ( dictionaryName ){	
+		var pickAWordFromDictionary = function ( dictionaryName ){	
 			return dictKeys[dictionaryName][ dictKeys[dictionaryName].length * Math.random() << 0 ];
 			
 		}
@@ -580,7 +588,7 @@ function SecurePassword() {
 		 * @param {number} lastTaken The last type of character taken 
 		 * @type {string} the generated word
 		 */
-		easierToRememberPasswordWordRec = function ( allowedCharset, currentWord, length, type, lastTaken ){
+		var easierToRememberPasswordWordRec = function ( allowedCharset, currentWord, length, type, lastTaken ){
 			if( currentWord.length >= length) return currentWord;
 			
 			var maxLength=length-currentWord.length;
@@ -630,7 +638,7 @@ function SecurePassword() {
 		 * @param {number} length The Length of generated password
 		 * @type {string} the generated password
 		 */
-		easierToRememberPasswordNumber = function ( charset, length ){
+		var easierToRememberPasswordNumber = function ( charset, length ){
 			var currNumber="";
 			
 			// if size is 4, chances for a date 2000's, 1900's ...etc.
@@ -656,7 +664,7 @@ function SecurePassword() {
 		/**
 		 * returns a character in both allowed and preferred charsets. If no common characters preferred, return one from allowed. 
 		 */
-		pickOneFromCharsetWithPreference = function (allowedCharacters, preferredCharacters){
+		var pickOneFromCharsetWithPreference = function (allowedCharacters, preferredCharacters){
 			var reducedCharset = commonCharset( allowedCharacters, preferredCharacters );
 			if( reducedCharset.length === 0 ){
 				reducedCharset=allowedCharacters;
@@ -704,7 +712,7 @@ function SecurePassword() {
 		 * Enables one charset
 		 * @param {string} The name of the charset to enable
 		 */
-		enableCharset = function ( charsetName ){
+		var enableCharset = function ( charsetName ){
 			console.log("Charset " + charsetName  + " enabled");
 			enabledCharsets[charsetName]=availableCharsets[charsetName];
 			return this;
@@ -749,7 +757,7 @@ function SecurePassword() {
 		 * Disables one charset
 		 * @param {string} The name of the charset to disable
 		 */
-		disableCharset = function ( charsetName ){
+		var disableCharset = function ( charsetName ){
 			console.log("Charset " + charsetName  + " disabled");
 			delete enabledCharsets[charsetName];
 			return this;
@@ -759,7 +767,7 @@ function SecurePassword() {
 		 * Builds a bigger charset from all enabled charsets
 		 * @type {string} The complete charset
 		 */
-		prepareCharset = function ( ){
+		var prepareCharset = function ( ){
 			var fullCharset="";
 			var logStr="Enabled charsets:";
 			for(var charset in enabledCharsets){
@@ -776,7 +784,7 @@ function SecurePassword() {
 		 * @param {string} charset The set of characters to use
 		 * @type {string} The random character
 		 */
-		nextChar = function ( charset ){	
+		var nextChar = function ( charset ){	
 			return charset.charAt(Math.floor(Math.random() * charset.length));
 		}
 
@@ -785,7 +793,7 @@ function SecurePassword() {
 		 * @param {string} password the password to analyze
 		 * @type {string} The eventually modified (or not) version of the password
 		 */
-		checkCompliance = function ( password ){
+		var checkCompliance = function ( password ){
 			var isCompliant=false;
 			
 			// if length is lower than number of charsets there's no way to solve it
@@ -812,7 +820,7 @@ function SecurePassword() {
 		 * @param {string} password the password to analyze
 		 * @type {string} The eventually modified (or not) version of the password
 		 */
-		addOneFromCharset = function ( charset, password ){	
+		var addOneFromCharset = function ( charset, password ){	
 			password = replaceCharAt( password, Math.floor(Math.random() * password.length), nextChar(charset))	;
 			return password;
 		} 
@@ -823,7 +831,7 @@ function SecurePassword() {
 		 * @param {number} index index of the character to replace
 		 * @type {string} The  modified version of the string
 		 */
-		replaceCharAt = function (inputStr, index, newChar) {
+		var replaceCharAt = function (inputStr, index, newChar) {
 			var strArray = inputStr.split("");
 			strArray[index] = newChar;
 			return strArray.join("");
@@ -877,7 +885,7 @@ function SecurePassword() {
 		 * @param {string} the password being evaluated
 		 * @type {object} The resulting rating
 		 */
-		rateDictionary = function (password, dictionary){
+		var rateDictionary = function (password, dictionary){
 			password=password.toLowerCase();
 			var curLetters = password.slice( 0 ), word = "";
 			var foundWords=[];
@@ -922,7 +930,7 @@ function SecurePassword() {
 		 * @param {string} the password being evaluated
 		 * @type {object} The resulting rating
 		 */
-		ratePasswordSize = function ( password ){
+		var ratePasswordSize = function ( password ){
 			var len = password.length;
 			
 			// lower than 5 is far too low	
@@ -948,7 +956,7 @@ function SecurePassword() {
 		 * @param {string} password The set of characters to use
 		 * @type {number} The rating, floating point value between 0 and 1
 		 */
-		rateSequences = function ( password ){
+		var rateSequences = function ( password ){
 			
 			var sequences=findSequences(password);
 			var seqLength = sequences.reduce(function(previousValue, currentValue, index, array){
@@ -977,7 +985,7 @@ function SecurePassword() {
 		 * @param {string} password The set of characters to use
 		 * @type {number} The rating, floating point value between 0 and 1
 		 */
-		rateKeyboardLayout = function ( password ){
+		var rateKeyboardLayout = function ( password ){
 			var keyboardSequences={};
 			if( !password || password.length===0 ){
 				return {rating: 0.0, comment: "no passwords"};
@@ -1036,7 +1044,7 @@ function SecurePassword() {
 		 * @param {string} string2 Second string
 		 * @return {object} longest substring: length, sequence, offset
 		 */
-		longestCommonSubstring = function (str1, str2){
+		var longestCommonSubstring = function (str1, str2){
 			if (!str1 || !str2)
 				return {
 					length: 0,
@@ -1100,7 +1108,7 @@ function SecurePassword() {
 		 * @param {string} the password being evaluated
 		 * @type {object} The resulting rating
 		 */
-		rateCharsets = function ( password ){
+		var rateCharsets = function ( password ){
 			var charsetCount=0;
 			charsetsStr="";
 			for(var charsetName in availableCharsets){
@@ -1129,7 +1137,7 @@ function SecurePassword() {
 		 * @param {string} the password being evaluated
 		 * @type {object} The resulting rating
 		 */
-		rateCharacterVariety = function ( password ){	
+		var rateCharacterVariety = function ( password ){	
 			var rate=rawRateCharacterVariety( password );
 			if (rate.rating >= 1.0 ) return {rating: 1.0, comment: rate.comment}; else return rate;
 		}
@@ -1138,7 +1146,7 @@ function SecurePassword() {
 		 * @param {string} the password being evaluated
 		 * @type {object} The resulting rating
 		 */
-		rawRateCharacterVariety = function ( password ){	
+		var rawRateCharacterVariety = function ( password ){	
 			var differentCharacters={};
 			for (var i=0;i<password.length;i++) {  
 				differentCharacters[password.charAt(i)]=true;
@@ -1177,7 +1185,7 @@ function SecurePassword() {
 		 * @param {string} password the password to analyze
 		 * @type {boolean} true if the password has at least one character from provided charset, false either
 		 */
-		hasOneFromCharset = function ( charset, password){
+		var hasOneFromCharset = function ( charset, password){
 			var hasFromCharset=false;
 			for (var i=0;i<password.length;i++) {    
 				if( charset.indexOf(password.charAt(i)) !== -1 ) {
@@ -1208,7 +1216,7 @@ function SecurePassword() {
 		 * @param {string} password the password to analyze
 		 * @type {string[]}
 		 */
-		findSequences = function ( password ){
+		var findSequences = function ( password ){
 			var lastCode=-1;
 			var lastChar="";
 			var isInSequence=false;
@@ -1295,7 +1303,7 @@ function SecurePassword() {
 		 * @param {number} passwdSize the size of the requested password
 		 * @type {string} The generated password
 		 */
-		makeAnyPasswordWithSize = function ( charset, passwdSize ){
+		var makeAnyPasswordWithSize = function ( charset, passwdSize ){
 			var passwd="";
 			
 			for (var i=0;i<passwdSize;i++) {
@@ -1319,6 +1327,31 @@ function SecurePassword() {
 			this.loadDictionary(englishdict,"english");
 			this.loadPasswdDictionary(worstPassswordsdict,"10k worst passwords");
 			return this;
+		}
+		
+			
+		/**
+		 * Generates a list of password hashes
+		 * @param {string} password the password for which hashes are required
+		 */	
+		this.makeHashFunctions =function ( password ){
+			var computedHashes={};
+			for(var hashname in hashFunctions){			
+				var txt=hashFunctions[hashname](password);
+				computedHashes[hashname]=txt;
+				console.log("Hash >> " + hashname  + " : " + txt);
+			}
+			return computedHashes;
+		}
+		
+		/**
+		 * Adds a Hash Function to be used
+		 * @param {string} hashFunction The string to look into
+		 * @param {string} name The name of the aHash Function
+		 * @type {object} The new set of HashFunctions
+		 */
+		this.addHashFunction = function ( hashFunction, name ){
+			hashFunctions[ name ] = function (password){return hashFunction(password);};
 		}
 		
 		return this.initialize();

@@ -25,5 +25,11 @@ SecurePasswordTool.loadPasswdDictionary(
 	,"10k worst passwords");
 
 
-$("#still_loading").text('');
-$("#still_loading").style.visibility='hidden';
+// Specify that dictionnaries are loaded if UI is ON
+if( typeof $ !== 'undefined'){
+	$("#still_loading").text('');
+	if( typeof $("#still_loading") !== 'undefined' && typeof $("#still_loading").style !== 'undefined'){
+		$("#still_loading").style.visibility='hidden';	
+	}	
+}
+

@@ -195,6 +195,35 @@ Unload all dictionaries
 
 If you fork this project you may choose to remove the dictionaries in order to reduce size of the javascript or replaced by more adapted one(s).
 
+## Hashes calculation
+
+For convenience (e.g. test password robustness on a rainbow table cracking tool), a set of password hashes is calculated.
+
+Provided hash functions are for the time being:
+	
+	RIPEMD-160
+	MD5
+	SHA-1
+	SHA-256
+	SHA-512
+
+NTLM is not yet implemented.
+
+
+Get hashes on a passwords via API:
+	
+	// returns a Dictionnary Object in the form "Hash function name":"Password Hash in hexadecimal"
+	var passHashes=SecurePasswordTool.makeHashFunctions("anyPassword");
+	for(var hashFunctionName in passHashes){		
+		console.log( "Function: " + hashFunctionName + " => " +  passHashes[hashFunctionName]);
+	}
+
+Add new hash functions:(that take only one parameter that is the password to hash)
+
+	// e.g. you have a function named NTLMHash 
+	SecurePasswordTool.addHashFunction(NTLMHash,"NTLM");
+
+
 
 ## Internationalization
 
@@ -209,9 +238,12 @@ Choose the language:
 
 ## Dependencies
 
-Password generation and rating have no dependencies (yet).
+Password generation and rating have one dependency (only)
 
-UI has very few dependencies:
+* **jshash**
+
+UI has very few more dependencies:
+
 * **JQuery**
 * **JQuery-UI** 
 * **gauge.coffee** (for the rating gauge)
