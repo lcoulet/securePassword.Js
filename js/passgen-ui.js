@@ -62,6 +62,14 @@ function SecurePasswordUI() {
 				);
 		return this;
 	}
+    this.buildShowButton = function ( elementID ){	
+		$( elementID ).button().click(
+					function( event ) {
+						showPasswordInUI();
+					}
+				);
+		return this;
+	}
 	this.buildTestButton = function ( elementID ){	
 		$( elementID ).button().click(
 					function( event ) {
@@ -69,7 +77,8 @@ function SecurePasswordUI() {
 					}
 				);
 		$("#generatedPassword").keyup(function() {
-			testPassword($("#generatedPassword").val());
+			$("#generatedPassword").prop("type", "password");
+            testPassword($("#generatedPassword").val());
 		});
 		return this;
 	}
@@ -81,9 +90,10 @@ function SecurePasswordUI() {
 		 $('#'+checkboxId).change(function(){
 			if( this.checked ) SecurePasswordTool.setCharacterRepetitionAllowed(true); else SecurePasswordTool.setCharacterRepetitionAllowed(false);
 		});
+        document.getElementById(checkboxId).disabled=true;
 		
 		checkboxId="easierPattern";	
-		$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxDisabled+'/><label for="'+checkboxId+'">Make pattern easier to remember (character repetition would be allowed)</label><br />');		 
+		$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxEnabled+'/><label for="'+checkboxId+'">Make pattern easier to remember (character repetition would be allowed)</label><br />');		 
 		 $('#'+checkboxId).change(function(){
 			if( this.checked ) {
 				SecurePasswordTool.setEasyPasswordRequested(true) ;
@@ -95,16 +105,16 @@ function SecurePasswordUI() {
 				document.getElementById("easyPatternUsesDict").disabled=true;
 			}
 		});
-		document.getElementById("repeatAllowed").disabled=false;
+		
 		
 		checkboxId="easyPatternUsesDict";	
-		$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxDisabled+'/><label for="'+checkboxId+'">Use dictionaries for pattern easier to remember (can contain other characters than selected)</label><br />');		 
+		$(elementID).append('<input type="checkbox" id="'+checkboxId+'" '+checkboxEnabled+'/><label for="'+checkboxId+'">Use dictionaries for pattern easier to remember (can contain other characters than selected)</label><br />');		 
 		 $('#'+checkboxId).change(function(){
 			if( this.checked ) {SecurePasswordTool.useDictionaryForEasyPasswordRequested(true) ;}else {SecurePasswordTool.useDictionaryForEasyPasswordRequested(false); }
 		});
-		document.getElementById("easyPatternUsesDict").disabled=true;
 		
-		$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="15" type="number" min="1" max="255" required/>');
+		
+		$(elementID).append('<label for="spinner">Password size:</label><input id="spinner" name="value" value="20" type="number" min="1" max="255" required/>');
 		var spinner = $( "#spinner" ).spinner({
 			min: 5,
 			max: 1000,
@@ -148,12 +158,21 @@ function SecurePasswordUI() {
 		}
 		return this;
 	}
+    var showPasswordInUI = function(){
+        if( $("#generatedPassword").prop("type") === 'text'){
+            $("#generatedPassword").prop("type", "password");
+        }
+        else {
+            $("#generatedPassword").prop("type", "text");
+        }
+    }
 	var generatePasswordInUI = function (){
 		var spinnerVal=parseInt($('#spinner').val());
 		if( !isNaN(spinnerVal)  ){
 			passwordSize=spinnerVal;
 		}
 		var passwd=SecurePasswordTool.makePasswordWithSize(passwordSize);
+		$("#generatedPassword").prop("type", "text");
 		$("#generatedPassword").val(passwd); 	
 		testPassword(passwd);
 		copyToClipboard(passwd);

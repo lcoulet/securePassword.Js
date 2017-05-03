@@ -28,8 +28,8 @@ function SecurePassword() {
 	classifiedCharsets["uppercase"]			= 'BCDFGHJKLMNPQRSTVWXZÇĞÑAEIOUYÂÃÄÀÁÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜİÅÆØß';
 	classifiedCharsets["lowercase"]			= 'aeiouybcdfghjklmnpqrstvwxzŞşçñàáâãäèéêëìíîïğòóôõöùúûüıÿåæø';
 
-	var easyPasswordRequested=false;
-	var easyPasswordUsingDictionary=false;
+	var easyPasswordRequested=true;
+	var easyPasswordUsingDictionary=true;
 
 	var defaultEnabledCharsets=["alphaLower","alphaUpper","numeric","punctuation"];
 
